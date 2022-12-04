@@ -1,0 +1,84 @@
+# CoCreate-mongodb
+
+A simple mongodb component in vanilla javascript. Easily configured using HTML5 data-attributes and/or JavaScript API. Take it for a spin in our [playground!](https://cocreate.app/docs/mongodb)
+
+![min file size in bytes](https://img.badgesize.io/https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js?style=flat-square&label=minified&color=orange)
+![gzip file size in bytes](https://img.badgesize.io/https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js?compression=gzip&style=flat-square&label=gzip&color=yellow)
+![brotlifile size in bytes](https://img.badgesize.io/https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js?compression=brotli&style=flat-square&label=brotli)
+![GitHub latest release](https://img.shields.io/github/v/release/CoCreate-app/CoCreate-mongodb?style=flat-square)
+![GitHub](https://img.shields.io/github/license/CoCreate-app/CoCreate-mongodb?style=flat-square)
+![GitHub](https://img.shields.io/static/v1?style=flat-square&label=&message=Hiring&color=blueviolet)
+
+
+![CoCreate-mongodb](https://cdn.cocreate.app/docs/CoCreate-mongodb.gif)
+
+## [Docs & Demo](https://cocreate.app/docs/mongodb)
+
+For a complete guide and working demo refer to the [doumentation](https://cocreate.app/docs/mongodb)
+
+## CDN
+
+```html
+<script src="https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js"></script>
+```
+
+```html
+<script src="https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.css"></script>
+```
+
+## NPM
+
+```shell
+$ npm i @cocreate/mongodb
+```
+
+## yarn
+
+```shell
+$ yarn install @cocreate/mongodb
+```
+
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Announcements](#announcements)
+- [Roadmap](#roadmap)
+- [How to Contribute](#how-to-contribute)
+- [About](#about)
+- [License](#license)
+
+<a name="announcements"></a>
+
+# Announcements
+
+All updates to this library are documented in our [CHANGELOG](https://github.com/CoCreate-app/CoCreate-mongodb/blob/master/CHANGELOG.md) and [releases](https://github.com/CoCreate-app/CoCreate-mongodb/releases). You may also subscribe to email for releases and breaking changes.
+
+<a name="roadmap"></a>
+
+# Roadmap
+
+If you are interested in the future direction of this project, please take a look at our open [issues](https://github.com/CoCreate-app/CoCreate-mongodb/issues) and [pull requests](https://github.com/CoCreate-app/CoCreate-mongodb/pulls). We would love to hear your feedback.
+
+<a name="about"></a>
+
+# About
+
+CoCreate-mongodb is guided and supported by the CoCreate Developer Experience Team.
+
+Please Email the Developer Experience Team [here](mailto:develop@cocreate.app) in case of any queries.
+
+CoCreate-mongodb is maintained and funded by CoCreate. The names and logos for CoCreate are trademarks of CoCreate, LLC.
+
+<a name="contribute"></a>
+
+# How to Contribute
+
+We encourage contribution to our libraries (you might even score some nifty swag), please see our [CONTRIBUTING](https://github.com/CoCreate-app/CoCreate-mongodb/blob/master/CONTRIBUTING.md) guide for details.
+
+We want this library to be community-driven, and CoCreate led. We need your help to realize this goal. To help make sure we are building the right things in the right order, we ask that you create [issues](https://github.com/CoCreate-app/CoCreate-mongodb/issues) and [pull requests](https://github.com/CoCreate-app/CoCreate-mongodb/pulls) or merely upvote or comment on existing issues or pull requests.
+
+We appreciate your continued support, thank you!
+
+# License
+
+[The MIT License (MIT)](https://github.com/CoCreate-app/CoCreate-mongodb/blob/master/LICENSE)
