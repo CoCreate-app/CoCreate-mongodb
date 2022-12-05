@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.1...v1.0.2) (2022-12-05)
+
+
+### Bug Fixes
+
+* bump dependencies ([1ec81cb](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1ec81cbd74d86a74db8d891e777b9fc664f8447f))
+* workflow automation ([f4a10d0](https://github.com/CoCreate-app/CoCreate-mongodb/commit/f4a10d0b096c5530e78bbe5858f9a83cedbecd88))
+
 ## [1.0.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.0...v1.0.1) (2022-12-04)
 
 
