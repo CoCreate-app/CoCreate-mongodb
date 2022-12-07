@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.2...v1.0.3) (2022-12-07)
+
+
+### Bug Fixes
+
+* MONGO_URL ([1cbb43d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1cbb43d2c71fbe81cadabf86afc481e5b4ae5fbe))
+
 ## [1.0.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.1...v1.0.2) (2022-12-05)
 
 
