@@ -3,7 +3,7 @@ const {dotNotationToObject, searchData, sortData} = require('@cocreate/utils')
 
 function mongoClient(dbUrl) {
 	try {
-		dbUrl = dbUrl || process.env.MONGO_URL || config.db_url;
+		dbUrl = dbUrl || process.env.MONGO_URL;
 		if (!dbUrl || !dbUrl.includes('mongodb'))
 			console.log('CoCreate.config.js missing dbUrl')
 		dbClient = MongoClient.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
