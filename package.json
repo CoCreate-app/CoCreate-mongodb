@@ -64,6 +64,6 @@
     "@cocreate/docs": "^1.4.13",
     "@cocreate/hosting": "^1.6.12",
     "@cocreate/utils": "^1.14.2",
-    "mongodb": "^4.4.0"
+    "mongodb": "^4.12.1"
   }
 }
