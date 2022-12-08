@@ -325,6 +325,7 @@ function document(action, data){
 								data[type][i]['created'] = {on: data.timeStamp, by: data.user_id || data.clientId}
 							}
 							if (action == 'readDocument' && data[type][i]._id) {
+								console.log(data[type][i]._id)
 								_ids.push(ObjectId(data[type][i]._id))
 							}
 							if (action =='updateDocument') {
