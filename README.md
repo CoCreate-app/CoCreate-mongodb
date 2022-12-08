@@ -2,9 +2,6 @@
 
 A simple mongodb component in vanilla javascript. Easily configured using HTML5 data-attributes and/or JavaScript API. Take it for a spin in our [playground!](https://cocreate.app/docs/mongodb)
 
-![min file size in bytes](https://img.badgesize.io/https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js?style=flat-square&label=minified&color=orange)
-![gzip file size in bytes](https://img.badgesize.io/https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js?compression=gzip&style=flat-square&label=gzip&color=yellow)
-![brotlifile size in bytes](https://img.badgesize.io/https://cdn.cocreate.app/mongodb/latest/CoCreate-mongodb.min.js?compression=brotli&style=flat-square&label=brotli)
 ![GitHub latest release](https://img.shields.io/github/v/release/CoCreate-app/CoCreate-mongodb?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/CoCreate-app/CoCreate-mongodb?style=flat-square)
 ![GitHub](https://img.shields.io/static/v1?style=flat-square&label=&message=Hiring&color=blueviolet)
