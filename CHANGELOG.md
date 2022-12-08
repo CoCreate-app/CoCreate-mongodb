@@ -1,3 +1,11 @@
+## [1.0.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.5...v1.0.6) (2022-12-08)
+
+
+### Bug Fixes
+
+* console.log ObjectId ([4ae33fd](https://github.com/CoCreate-app/CoCreate-mongodb/commit/4ae33fdf77cbd5486fcef1b1088f430ff3a80efe))
+* test ObjectId ([cbe0b20](https://github.com/CoCreate-app/CoCreate-mongodb/commit/cbe0b20304c2cb34a4feef7e0586148e171cab26))
+
 ## [1.0.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.4...v1.0.5) (2022-12-08)
 
 
