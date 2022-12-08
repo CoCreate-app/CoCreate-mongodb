@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.6...v1.0.7) (2022-12-08)
+
+
+### Bug Fixes
+
+* remove console.log ([311605d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/311605de82045b237a4e1b5f0f957bd2b7e2682c))
+
 ## [1.0.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.5...v1.0.6) (2022-12-08)
 
 
