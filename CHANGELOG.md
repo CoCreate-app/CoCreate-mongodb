@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.10...v1.1.0) (2022-12-11)
+
+
+### Bug Fixes
+
+* bump dependencies ([127aa5f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/127aa5f316d6d9276ef29b83613a8d1fa9cc26ad))
+
+
+### Features
+
+* query, search and sort databases and collections ([d19b2cd](https://github.com/CoCreate-app/CoCreate-mongodb/commit/d19b2cd1c516c15685c1cb4818468f69bd2f9a3b))
+
 ## [1.0.10](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.0.9...v1.0.10) (2022-12-09)
 
 
