@@ -1,5 +1,5 @@
 const {MongoClient, ObjectId} = require('mongodb');
-const {dotNotationToObject, searchData, sortData} = require('@cocreate/utils')
+const {dotNotationToObject, queryData, searchData, sortData} = require('@cocreate/utils')
 
 function mongoClient(dbUrl) {
 	try {
@@ -44,15 +44,23 @@ function deleteDatabase(data) {
 
 function database(action, data){
 	return new Promise((resolve, reject) => {
-		const self = this;
-
+		let type = 'database'
+		let databaseArray = []
+		
 		try {
 			if (action == 'readDatabase') {
 				let db = dbClient.db().admin();
 
 				// List all the available databases
 				db.listDatabases(function(err, dbs) {
-					resolve({...data, database: dbs.databases})					
+									
+					for (let database of dbs.databases){
+						let isFilter = queryData(database, data.filter.query)
+						if (isFilter)
+							databaseArray.push({database, db: 'mongodb'})
+					}
+					
+					resolve(createData(data, databaseArray, type))	
 				})
 	
 			}
@@ -63,16 +71,16 @@ function database(action, data){
 				})
 			}
 		} catch(error) {
-			errorLog.push(error)
-			data['error'] = errorLog
+			errorHandler(data, error)
 			console.log(action, 'error', error);
 			resolve(data);
 		}
 
-	}, (err) => {
-		errorHandler(data, err)
+	}, (error) => {
+		errorHandler(data, error)
 	});
 }
+
 
 function createCollection(data){
 	return collection('createCollection', data)
@@ -90,22 +98,11 @@ function deleteCollection(data) {
 	return collection('deleteCollection', data)
 }
 
-
 function collection(action, data){
 	return new Promise((resolve, reject) => {
-
-		const self = this;
 		let type = 'collection'
 		let collectionArray = [];
 		
-		let errorLog = [];
-		const errorHandler = (error) => {
-			if (error) {
-				error.db = 'mongodb'
-				errorLog.push(error);
-			}
-		}
-
 		try {
 			if (data.request)
 				data.collection = data.request
@@ -121,19 +118,21 @@ function collection(action, data){
 
 					let {query, sort} = getFilters(data);
 
-					db.listCollections(query).toArray(function(error, result) {
-						if (error) {
-							error.database = database
-							errorHandler(error)
-						}
+					db.listCollections().toArray(function(error, result) {
+						if (error)
+							errorHandler(data, error, database)
 						
-						if (result)
-							for (let res of result)
-								collectionArray.push({name: res.name, database, db: 'mongodb'})
+						if (result) {
+							for (let res of result) {
+								let isFilter = queryData(res, data.filter.query)
+								if (isFilter)
+									collectionArray.push({name: res.name, database, db: 'mongodb'})
+							}
+						}
 
 						databasesLength -= 1
 						if (!databasesLength) {
-							data = createData(data, collectionArray, type, errorLog)
+							data = createData(data, collectionArray, type)
 							resolve(data)					
 						}
 					})		
@@ -153,11 +152,9 @@ function collection(action, data){
 						
 						if (action == 'createCollection') {
 							db.createCollection(collection, function(error, result) {
-								if (error) {
-									error.database = database
-									error.collection = collection 
-									errorHandler(error)
-								}
+								if (error)
+									errorHandler(data, error, database, collection)
+
 								if (result)
 									collectionArray.push({name: collection, database, db: 'mongodb'})
 
@@ -166,7 +163,7 @@ function collection(action, data){
 									databasesLength -= 1
 								
 								if (!databasesLength && !collectionsLength) {
-									data = createData(data, collectionArray, type, errorLog)
+									data = createData(data, collectionArray, type)
 									resolve(data)					
 								}
 							})
@@ -179,11 +176,8 @@ function collection(action, data){
 
 							if (action == 'updateCollection') {
 								collectionObj.rename(value, function(error, result) {
-									if (error) {
-										error.database = database
-										error.collection = collection 
-										errorHandler(error)
-									}
+									if (error)
+										errorHandler(data, error, database, collection)
 					
 									if (result)
 										collectionArray.push({name: value, oldName: collection, database, db: 'mongodb'})
@@ -193,7 +187,7 @@ function collection(action, data){
 										databasesLength -= 1
 									
 									if (!databasesLength && !collectionsLength) {
-										data = createData(data, collectionArray, type, errorLog)
+										data = createData(data, collectionArray, type)
 										resolve(data)
 									}
 
@@ -202,11 +196,9 @@ function collection(action, data){
 
 							if (action == 'deleteCollection') {
 								collectionObj.drop( function(error, result) {
-									if (error) {
-										error.database = database
-										error.collection = collection 
-										errorHandler(error)
-									}
+									if (error)
+										errorHandler(data, error, database, collection)
+									
 									if (result)
 										collectionArray.push({name: collection, database, db: 'mongodb'})
 									
@@ -215,7 +207,7 @@ function collection(action, data){
 										databasesLength -= 1
 									
 									if (!databasesLength && !collectionsLength) {
-										data = createData(data, collectionArray, type, errorLog)
+										data = createData(data, collectionArray, type)
 										resolve(data)
 									}
 
@@ -228,15 +220,15 @@ function collection(action, data){
 				}
 			}
 		} catch(error) {
-			errorLog.push(error)
-			data['error'] = errorLog
+			errorHandler(data, error)
 			console.log(action, 'error', error);
 			resolve(data);
 		}
-	}, (err) => {
-		errorHandler(data, err)
+	}, (error) => {
+		errorHandler(data, error)
 	});
 }
+
 
 function createDocument(data){
 	return document('createDocument', data)
@@ -256,17 +248,6 @@ function deleteDocument(data) {
 
 function document(action, data){
 	return new Promise(async (resolve, reject) => {
-
-		const self = this;
-
-		let errorLog = [];
-		const errorHandler = (error) => {
-			if (error) {
-				error.db = 'mongodb'
-				errorLog.push(error);
-			}
-		}
-
 		try {
 			let type = 'document'
 			let documents = [];
@@ -353,11 +334,8 @@ function document(action, data){
 
 					if (action == 'createDocument') {
 						collectionObj.insertMany(data[type], function(error, result) {
-							if (error) {
-								error.database = database
-								error.collection = collection 
-								errorHandler(error)
-							}
+							if (error)
+								errorHandler(data, error, database, collection)
 							
 							for (let i = 0; i < data[type].length; i++)
 								documents.push({db: 'mongodb', database, collection, ...data[type][i]})
@@ -367,7 +345,7 @@ function document(action, data){
 								databasesLength -= 1
 							
 							if (!databasesLength && !collectionsLength) {
-								data = createData(data, documents, type, errorLog)
+								data = createData(data, documents, type)
 								resolve(data)					
 							}
 						});	
@@ -388,11 +366,8 @@ function document(action, data){
 						}
 				
 						collectionObj.find(query).limit(limit).sort(sort).toArray(function(error, result) {
-							if (error) {
-								error.database = database
-								error.collection = collection 
-								errorHandler(error)
-							}
+							if (error)
+								errorHandler(data, error, database, collection)
 	
 							if (result) {
 								// ToDo: forEach at cursor
@@ -431,7 +406,7 @@ function document(action, data){
 								databasesLength -= 1
 							
 							if (!databasesLength && !collectionsLength) {
-								data = createData(data, documents, type, errorLog)
+								data = createData(data, documents, type)
 								resolve(data)					
 							}
 						});
@@ -442,11 +417,9 @@ function document(action, data){
 							return new Promise((resolve, reject) => {
 						
 								collectionObj.find(query).sort(sort).toArray(function(error, result) {
-									if (error) {
-										error.database = database
-										error.collection = collection 
-										errorHandler(error)
-									}
+									if (error)
+										errorHandler(data, error, database, collection)
+									
 									if (data.filter && data.filter.search) {
 										let searchResult = []
 
@@ -513,7 +486,7 @@ function document(action, data){
 								}).then((result) => {	
 
 								}).catch((error) => {
-									errorLog.push(error)
+									errorHandler(data, error, database, collection)
 									console.log(action, 'error', error);
 								}).finally((error) => {
 									docsLength -= 1
@@ -524,7 +497,7 @@ function document(action, data){
 										databasesLength -= 1
 									
 									if (!databasesLength && !collectionsLength) {
-										data = createData(data, documents, type, errorLog)
+										data = createData(data, documents, type)
 										resolve(data)					
 									}
 								})
@@ -539,7 +512,7 @@ function document(action, data){
 									databasesLength -= 1
 								
 								if (!databasesLength && !collectionsLength) {
-									data = createData(data, documents, type, errorLog)
+									data = createData(data, documents, type)
 									resolve(data)					
 								}
 							}
@@ -557,7 +530,7 @@ function document(action, data){
 									databasesLength -= 1
 								
 								if (!databasesLength && !collectionsLength) {
-									data = createData(data, documents, type, errorLog)
+									data = createData(data, documents, type)
 									resolve(data)					
 								}
 								
@@ -570,13 +543,12 @@ function document(action, data){
 			}
 
 		} catch(error) {
-			errorLog.push(error)
-			data['error'] = errorLog
+			errorHandler(data, error)
 			console.log(action, 'error', error);
 			resolve(data);
 		}
-	}, (err) => {
-		errorHandler(data, err)
+	}, (error) => {
+		errorHandler(data, error)
 	});
 
 }
@@ -616,10 +588,7 @@ function createUpdate(data, type) {
 
 }
 
-function createData(data, array, type, errorLog) {
-	if (errorLog.length > 0)
-		data['error'] = errorLog
-
+function createData(data, array, type) {
 	if (!data.request)
 		data.request = data[type] || {}
 
