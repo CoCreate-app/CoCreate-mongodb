@@ -1,3 +1,11 @@
+## [1.1.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.1...v1.1.2) (2022-12-13)
+
+
+### Bug Fixes
+
+* bump dependencies ([fcf95de](https://github.com/CoCreate-app/CoCreate-mongodb/commit/fcf95de70fbfeba97f4d313ed0b8134a4496cca2))
+* supports operator includes and $includes ([d63e4a4](https://github.com/CoCreate-app/CoCreate-mongodb/commit/d63e4a48cba168955b71430c6a7a465849388cc0))
+
 ## [1.1.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.0...v1.1.1) (2022-12-12)
 
 
