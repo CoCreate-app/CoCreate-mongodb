@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.2...v1.1.3) (2022-12-13)
+
+
+### Bug Fixes
+
+* removed un used devDependencies ([9464256](https://github.com/CoCreate-app/CoCreate-mongodb/commit/94642566c03fba94932903d29e6b92a4a7a3f03d))
+
 ## [1.1.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.1...v1.1.2) (2022-12-13)
 
 
