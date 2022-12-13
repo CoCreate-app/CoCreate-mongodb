@@ -622,10 +622,17 @@ function getFilters(data) {
 	query = createQuery(filter.query);
 
 
-	if (filter.sort)
-		for (let i = 0; i < filter.sort.length; i++)
-			sort[filter.sort[i].name] = filter.sort[i].direction
+	if (filter.sort) {
+		for (let i = 0; i < filter.sort.length; i++) {
+			let direction = filter.sort[i].direction
+			if (direction == 'desc' || direction == -1)
+				direction = -1;   
+			else
+				direction = 1;
 	
+			sort[filter.sort[i].name] = filter.sort[i].direction
+		}
+	}
 	return {query, sort}
 }
 
@@ -647,6 +654,7 @@ function createQuery(filters) {
 		
 		switch (item.operator) {
 			case '$includes':
+			case 'includes':
 				query[key]['$regex'] = item.value;
 				break;
 				
@@ -660,6 +668,8 @@ function createQuery(filters) {
 				}
 				break;
 				
+			case 'equals':
+				query[$eq][item.operator] = item.value;
 			case '$eq':
 			case '$ne':
 			case '$lt':
