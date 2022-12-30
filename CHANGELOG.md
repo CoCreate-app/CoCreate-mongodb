@@ -1,3 +1,10 @@
+## [1.1.12](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.11...v1.1.12) (2022-12-30)
+
+
+### Bug Fixes
+
+* update config sources to use template  braces with entry on src ([d2ca0fe](https://github.com/CoCreate-app/CoCreate-mongodb/commit/d2ca0fe5885af2b8e03d2c704e102ec55f847502))
+
 ## [1.1.11](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.10...v1.1.11) (2022-12-29)
 
 
