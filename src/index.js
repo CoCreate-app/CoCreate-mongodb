@@ -640,18 +640,24 @@ function getFilters(data) {
 function createQuery(filters) {
 	let query = new Object();
 
-	filters.forEach((item) => {
-		if (!item.name) {
-			return;
+
+	for (let item of filters) {
+
+		if (!item.name)
+			continue
+		
+		if (item.name == "_id") {
+			if (item.value) 
+				item.value = ObjectId(item.value)
+			else
+				continue
 		}
-		var key = item.name;
+
+		let key = item.name;
 		if (!query[key]) {
 			query[key] = {};
 		}
-		
-		if (item.name == "_id") 
-			item.value = ObjectId(item.value)
-		
+	
 		switch (item.operator) {
 			case '$includes':
 			case 'includes':
@@ -703,7 +709,7 @@ function createQuery(filters) {
 				}
 				break;
 		}    
-	})
+	}
 
 	//. global search
 	//. we have to set indexes in text fields ex: db.chart.createIndex({ "$**": "text" })
