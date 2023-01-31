@@ -1,3 +1,10 @@
+## [1.1.24](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.23...v1.1.24) (2023-01-31)
+
+
+### Bug Fixes
+
+* bump dependencies ([cc5e35e](https://github.com/CoCreate-app/CoCreate-mongodb/commit/cc5e35ea61de3f831fcc6b709ca462e22ede0673))
+
 ## [1.1.23](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.22...v1.1.23) (2023-01-30)
 
 
