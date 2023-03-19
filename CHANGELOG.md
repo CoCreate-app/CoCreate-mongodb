@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.25...v1.2.0) (2023-03-19)
+
+
+### Features
+
+* dynamically connect to user defined dbUrl ([343ab8e](https://github.com/CoCreate-app/CoCreate-mongodb/commit/343ab8e5a72683a3be74c24acfc4489198564c10))
+
 ## [1.1.25](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.24...v1.1.25) (2023-02-01)
 
 
