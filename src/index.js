@@ -73,8 +73,11 @@ function database(action, data) {
 				db.listDatabases(function (err, dbs) {
 
 					for (let database of dbs.databases) {
-						let isFilter = queryData(database, data.filter.query)
-						if (isFilter)
+						if (data.filter && data.filter.query) {
+							let isFilter = queryData(database, data.filter.query)
+							if (isFilter)
+								databaseArray.push({ database, db: 'mongodb' })
+						} else
 							databaseArray.push({ database, db: 'mongodb' })
 					}
 
