@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.0...v1.2.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* data.filter && data.filter.query ([bc3a0db](https://github.com/CoCreate-app/CoCreate-mongodb/commit/bc3a0db6d1fb6e7eed68031ed76a6af4cfcb1576))
+
 # [1.2.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.1.25...v1.2.0) (2023-03-19)
 
 
