@@ -24,13 +24,16 @@ mongoClient().then(Client => {
 
 async function dbClient(data) {
 	// ToDo: provide platform client only to specific collections ['permissions', 'metrics', 'organizations', 'users']
-	if (!data.dbs)
-		return platformClient
-	let client = clients.get(data.dbs)
-	if (!client) {
-		client = await mongoClient(data.dbs)
-		clients.set(data.dbs, client)
-	}
+	let client;
+	if (data.dbs) {
+		client = clients.get(data.dbs)
+		if (!client) {
+			client = await mongoClient(data.dbs)
+			clients.set(data.dbs, client)
+		}
+	} else if (data.organization_id === process.env.organization_id) {
+		client = platformClient
+	} 
 	return client
 }
 
