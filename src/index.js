@@ -2,39 +2,22 @@ const { MongoClient, ObjectId } = require('mongodb');
 const { dotNotationToObject, queryData, searchData, sortData } = require('@cocreate/utils')
 const clients = new Map()
 
-async function mongoClient(dbUrl) {
-	try {
-		dbUrl = dbUrl || process.env.MONGO_URL;
-		if (!dbUrl || !dbUrl.includes('mongodb'))
-			console.log('CoCreate.config.js missing dbUrl')
-		const Client = MongoClient.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-		return Client;
-	} catch (error) {
-		console.error(error)
-		return {
-			status: false
-		}
-	}
-}
-
-let platformClient;
-mongoClient().then(Client => {
-	platformClient = Client
-});
 
 async function dbClient(data) {
-	// ToDo: provide platform client only to specific collections ['permissions', 'metrics', 'organizations', 'users']
-	let client;
-	if (data.dbs) {
-		client = clients.get(data.dbs)
+	if (data.dbUrl) {
+		let client = clients.get(data.dbUrl)
 		if (!client) {
-			client = await mongoClient(data.dbs)
-			clients.set(data.dbs, client)
+			try {
+				client = MongoClient.connect(data.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+				clients.set(data.dbUrl, client)
+			} catch (error) {
+				console.error(error)
+				return { status: false }
+			}
 		}
-	} else if (data.organization_id === process.env.organization_id) {
-		client = platformClient
-	} 
-	return client
+		return client
+	}
+	return
 }
 
 async function databaseStats(data) {
