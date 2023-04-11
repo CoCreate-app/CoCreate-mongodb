@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.1...v1.2.2) (2023-04-11)
+
+
+### Bug Fixes
+
+* dbClient optimization ([1a18f6f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1a18f6f68cd9cd1f7546b36743aa164337d74423))
+* renamed domans to hosts ([10d3f86](https://github.com/CoCreate-app/CoCreate-mongodb/commit/10d3f860d1f1f42beb008069a7282632e4c617aa))
+* return platformClient if organization_id = process.env.organization_id ([a758d7f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/a758d7f63c176edaf8f1c1033196e70b82d52168))
+
 ## [1.2.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.0...v1.2.1) (2023-03-28)
 
 
