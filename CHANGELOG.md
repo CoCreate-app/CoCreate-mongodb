@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.2...v1.2.3) (2023-04-12)
+
+
+### Bug Fixes
+
+* data.filter.query error solved using if condition ([ab65717](https://github.com/CoCreate-app/CoCreate-mongodb/commit/ab65717ac77d900860b88c6a258a80e5d06194e9))
+
 ## [1.2.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.1...v1.2.2) (2023-04-11)
 
 
