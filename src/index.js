@@ -134,8 +134,11 @@ function collection(action, data) {
 
 						if (result) {
 							for (let res of result) {
-								let isFilter = queryData(res, data.filter.query)
-								if (isFilter)
+								if (data.filter && data.filter.query) {
+									let isFilter = queryData(res, data.filter.query)
+									if (isFilter)
+										collectionArray.push({ name: res.name, database, db: 'mongodb' })
+								} else 
 									collectionArray.push({ name: res.name, database, db: 'mongodb' })
 							}
 						}
