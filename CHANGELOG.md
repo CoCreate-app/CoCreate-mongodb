@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.3...v1.2.4) (2023-04-24)
+
+
+### Bug Fixes
+
+* removed uglify.js from dev dependencies ([2a9dcee](https://github.com/CoCreate-app/CoCreate-mongodb/commit/2a9dcee7c88ee46f80c0fc178798bc5bc3ee0dbe))
+
 ## [1.2.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.2...v1.2.3) (2023-04-12)
 
 
