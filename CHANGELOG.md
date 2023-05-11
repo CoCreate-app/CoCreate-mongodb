@@ -1,3 +1,11 @@
+## [1.2.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.4...v1.2.5) (2023-05-11)
+
+
+### Bug Fixes
+
+* apikey renamed to key ([b32edda](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b32eddab716480b25b6d8f1e567e0b2149191410))
+* replace key ([2fc880e](https://github.com/CoCreate-app/CoCreate-mongodb/commit/2fc880e87c5e563c9ed0bc55bead894b3692e251))
+
 ## [1.2.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.3...v1.2.4) (2023-04-24)
 
 
