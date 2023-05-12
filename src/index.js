@@ -387,7 +387,7 @@ function document(action, data) {
 								errorHandler(data, error, database, collection)
 
 							if (result) {
-								// ToDo: forEach at cursor
+								// TODO: forEach at cursor
 								for (let doc of result) {
 									let isMatch = true
 									if (data.filter && data.filter['search'])
@@ -653,7 +653,7 @@ function getFilters(data) {
 	return { query, sort }
 }
 
-// ToDo: create impved mongodb query to cover many cases
+// TODO: create impved mongodb query to cover many cases
 function createQuery(filters) {
 	let query = new Object();
 
