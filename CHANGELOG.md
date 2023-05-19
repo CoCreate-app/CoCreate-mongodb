@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.5...v1.3.0) (2023-05-19)
+
+
+### Features
+
+* Update projection with update keys and modify update operations based on key format. ([1f9e170](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1f9e170c80fd74e89b28990fc549a3339bb57a3e))
+
 ## [1.2.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.4...v1.2.5) (2023-05-11)
 
 
