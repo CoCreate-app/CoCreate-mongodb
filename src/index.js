@@ -579,17 +579,18 @@ function createUpdate(data, type) {
             delete update['$set']['_id']
         Object.keys(update['$set']).forEach(key => {
 
-            if (key.includes('[u]'))
+            if (key.includes('[u]')) {
                 update['$addToSet'] = { [key.replace('[u]', '')]: update['$set'][key] }
-            else if (key.includes('[]')) {
+                delete update['$set'][key]
+            } else if (key.includes('[]')) {
                 if (!Array.isArray(update['$set'][key]))
                     update['$set'][key] = [update['$set'][key]]
 
                 update['$push'] = {
                     [key.replace('[]', '')]: { $each: update['$set'][key] }
                 }
+                delete update['$set'][key]
             }
-            delete update['$set'][key]
             // { $push: { "skills": { $each: ["Sports", "Acting"] } } })
             // { $addToSet: { "skills": "GST" } }) // adds "GST"to all arrays if not exist
             projection[key] = 1
