@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.3.0...v1.3.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* $set keys were  deletes due to array handeling function unnecessary keys to reduce clutter and improve efficiency. ([979d873](https://github.com/CoCreate-app/CoCreate-mongodb/commit/979d87391bbac72c65123b665f5b088d19fd5594))
+
 # [1.3.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.2.5...v1.3.0) (2023-05-19)
 
 
