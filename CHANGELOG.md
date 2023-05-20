@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.3.1...v1.3.2) (2023-05-20)
+
+
+### Bug Fixes
+
+* updated dependencies to their latest versions ([adca1c6](https://github.com/CoCreate-app/CoCreate-mongodb/commit/adca1c6046ae3ec00121df74072c46fbaf3082f3))
+
 ## [1.3.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.3.0...v1.3.1) (2023-05-19)
 
 
