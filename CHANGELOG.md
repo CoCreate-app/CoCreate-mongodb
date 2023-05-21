@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.3.2...v1.4.0) (2023-05-21)
+
+
+### Features
+
+* Refactor index.js document function to return updated documents when returnDocument is set to false. ([6dba55b](https://github.com/CoCreate-app/CoCreate-mongodb/commit/6dba55b93237d7e411ddacb09be7242f103edc7f))
+
 ## [1.3.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.3.1...v1.3.2) (2023-05-20)
 
 
