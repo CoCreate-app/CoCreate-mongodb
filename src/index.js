@@ -397,24 +397,26 @@ function document(action, data) {
                                         doc.database = database
                                         doc.collection = collection
                                         doc._id = doc._id.toString()
+
+                                        if (data.returnDocument == false) {
+                                            let tempDoc = {};
+                                            let docs = new Map(data[type].map((obj) => [obj._id, obj]));
+                                            let doc1 = docs.get(doc._id)
+                                            if (doc1) {
+                                                tempDoc._id = tempDoc
+                                                for (let key of Object.keys(doc1)) {
+                                                    tempDoc[key] = doc[key]
+                                                }
+                                                doc = tempDoc
+                                            }
+                                        }
+
                                         documents.push(doc)
                                     }
                                 }
 
                                 if (index && limit) {
                                     documents = documents.slice(index, limit)
-                                }
-
-                                if (data.returnDocument == false) {
-
-                                    for (let item of data['data']) {
-                                        let resp = {};
-                                        resp['_id'] = tmp['_id']
-                                        data[type].forEach((f) => resp[f] = item[f])
-                                        documents.push(resp);
-                                    }
-
-                                    data['data'] = documents
                                 }
                             }
 
