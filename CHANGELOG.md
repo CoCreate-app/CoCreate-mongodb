@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.3...v1.4.4) (2023-06-04)
+
+
+### Bug Fixes
+
+* Refactor CoCreate.config.js to remove hard-coded credentials ([5becc47](https://github.com/CoCreate-app/CoCreate-mongodb/commit/5becc47d2530b32cc961e9c1b45f73fd079d2f0d))
+
 ## [1.4.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.2...v1.4.3) (2023-06-04)
 
 
