@@ -1,3 +1,11 @@
+## [1.4.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.1...v1.4.2) (2023-06-04)
+
+
+### Bug Fixes
+
+* [@v3](https://github.com/v3) ([bc8820f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/bc8820f33e9aaa8122acfab562e50994fb087ea6))
+* html formating ([1e6e4cb](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1e6e4cb0c0dcd5e03e81f1bc49f78d83fa5b4173))
+
 ## [1.4.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.0...v1.4.1) (2023-05-25)
 
 
