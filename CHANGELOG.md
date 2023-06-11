@@ -1,3 +1,10 @@
+## [1.4.9](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.8...v1.4.9) (2023-06-11)
+
+
+### Bug Fixes
+
+* @cocreate/cli moved to dependencies ([c0bfb2d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/c0bfb2d445c3aab38ffc8fc5fba987dd5a91c418))
+
 ## [1.4.8](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.7...v1.4.8) (2023-06-11)
 
 
