@@ -1,3 +1,10 @@
+## [1.4.12](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.11...v1.4.12) (2023-06-11)
+
+
+### Bug Fixes
+
+* testing workflow ([8a13c04](https://github.com/CoCreate-app/CoCreate-mongodb/commit/8a13c0485688e5b4842327936678a50eb26cd6ee))
+
 ## [1.4.11](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.10...v1.4.11) (2023-06-11)
 
 
