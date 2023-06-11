@@ -1,3 +1,11 @@
+## [1.4.7](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.6...v1.4.7) (2023-06-11)
+
+
+### Bug Fixes
+
+* renamed db to storage ([5eaa2bb](https://github.com/CoCreate-app/CoCreate-mongodb/commit/5eaa2bb4c5dbfb2470185a4e075b419c8529e1d7))
+* renamed hosts to host. the value can be a string or an array of strings ([3dcbd95](https://github.com/CoCreate-app/CoCreate-mongodb/commit/3dcbd9501b9078324e536f550281c1708a0ff357))
+
 ## [1.4.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.5...v1.4.6) (2023-06-10)
 
 
