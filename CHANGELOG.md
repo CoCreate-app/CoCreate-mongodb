@@ -1,3 +1,10 @@
+## [1.4.10](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.9...v1.4.10) (2023-06-11)
+
+
+### Bug Fixes
+
+* postintall error ([b436a82](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b436a824623cf28b4d230064296e88614556d4ec))
+
 ## [1.4.9](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.8...v1.4.9) (2023-06-11)
 
 
