@@ -393,7 +393,7 @@ function document(action, data) {
                                     if (data.filter && data.filter['search'])
                                         isMatch = searchData(doc, data.filter['search'])
                                     if (isMatch) {
-                                        doc.db = 'mongodb'
+                                        doc.storage = 'mongodb'
                                         doc.database = database
                                         doc.collection = collection
                                         doc._id = doc._id.toString()
@@ -752,7 +752,7 @@ function createQuery(filters) {
 
 function errorHandler(data, error, database, collection) {
     if (typeof error == 'object')
-        error['db'] = 'mongodb'
+        error['storage'] = 'mongodb'
     else
         error = { db: 'mongodb', message: error }
 
