@@ -374,15 +374,15 @@ function document(action, data) {
                             const count = await collectionObj.estimatedDocumentCount()
                             data.filter.count = count
 
-                            if (data.filter.startIndex)
-                                index = data.filter.startIndex
+                            if (data.filter.index)
+                                index = data.filter.index
                             if (data.filter.limit)
                                 limit = data.filter.limit
                             if (limit)
                                 limit = index + limit;
                         }
 
-                        collectionObj.find(query).limit(limit).sort(sort).toArray(function (error, result) {
+                        collectionObj.find(query).skip(index).limit(limit).sort(sort).toArray(function (error, result) {
                             if (error)
                                 errorHandler(data, error, database, collection)
 
@@ -415,9 +415,9 @@ function document(action, data) {
                                     }
                                 }
 
-                                if (index && limit) {
-                                    documents = documents.slice(index, limit)
-                                }
+                                // if (index && limit) {
+                                //     documents = documents.slice(index, limit)
+                                // }
                             }
 
                             collectionsLength -= 1
@@ -649,7 +649,7 @@ function getFilters(data) {
             value: [],
             type: "or"
         },
-        startIndex: 0,
+        index: 0,
         ...data.filter
     };
 
