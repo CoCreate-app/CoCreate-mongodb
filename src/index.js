@@ -89,32 +89,32 @@ function database(action, data) {
 
 
 function createCollection(data) {
-    return collection('createCollection', data)
+    return array('createCollection', data)
 }
 
 function readCollection(data) {
-    return collection('readCollection', data)
+    return array('readCollection', data)
 }
 
 function updateCollection(data) {
-    return collection('updateCollection', data)
+    return array('updateCollection', data)
 }
 
 function deleteCollection(data) {
-    return collection('deleteCollection', data)
+    return array('deleteCollection', data)
 }
 
-function collection(action, data) {
+function array(action, data) {
     return new Promise(async (resolve, reject) => {
-        let type = 'collection'
-        let collectionArray = [];
+        let type = 'array'
+        let arrayArray = [];
 
         try {
             const client = await dbClient(data)
             if (!client) return
 
             if (data.request)
-                data.collection = data.request
+                data.array = data.request
 
             let databases = data.database;
             if (!Array.isArray(databases))
@@ -137,70 +137,70 @@ function collection(action, data) {
                                 if (data.filter && data.filter.query) {
                                     let isFilter = queryData(res, data.filter.query)
                                     if (isFilter)
-                                        collectionArray.push({ name: res.name, database, db: 'mongodb' })
+                                        arrayArray.push({ name: res.name, database, db: 'mongodb' })
                                 } else
-                                    collectionArray.push({ name: res.name, database, db: 'mongodb' })
+                                    arrayArray.push({ name: res.name, database, db: 'mongodb' })
                             }
                         }
 
                         databasesLength -= 1
                         if (!databasesLength) {
-                            data = createData(data, collectionArray, type)
+                            data = createData(data, arrayArray, type)
                             resolve(data)
                         }
                     })
                 } else {
-                    let collections
+                    let arrays
                     let value
                     if (action == 'updateCollection')
-                        collections = Object.entries(data.collection)
+                        arrays = Object.entries(data.array)
                     else
-                        collections = data.collection;
+                        arrays = data.array;
 
-                    if (!Array.isArray(collections))
-                        collections = [collections]
+                    if (!Array.isArray(arrays))
+                        arrays = [arrays]
 
-                    let collectionsLength = collections.length
-                    for (let collection of collections) {
+                    let arraysLength = arrays.length
+                    for (let array of arrays) {
 
                         if (action == 'createCollection') {
-                            db.createCollection(collection, function (error, result) {
+                            db.createCollection(array, function (error, result) {
                                 if (error)
-                                    errorHandler(data, error, database, collection)
+                                    errorHandler(data, error, database, array)
 
                                 if (result)
-                                    collectionArray.push({ name: collection, database, db: 'mongodb' })
+                                    arrayArray.push({ name: array, database, db: 'mongodb' })
 
-                                collectionsLength -= 1
-                                if (!collectionsLength)
+                                arraysLength -= 1
+                                if (!arraysLength)
                                     databasesLength -= 1
 
-                                if (!databasesLength && !collectionsLength) {
-                                    data = createData(data, collectionArray, type)
+                                if (!databasesLength && !arraysLength) {
+                                    data = createData(data, arrayArray, type)
                                     resolve(data)
                                 }
                             })
                         } else {
                             if (action == 'updateCollection') {
-                                [collection, value] = collection
+                                [array, value] = array
                             }
 
-                            const collectionObj = db.collection(collection);
+                            const arrayObj = db.array(array);
 
                             if (action == 'updateCollection') {
-                                collectionObj.rename(value, function (error, result) {
+                                arrayObj.rename(value, function (error, result) {
                                     if (error)
-                                        errorHandler(data, error, database, collection)
+                                        errorHandler(data, error, database, array)
 
                                     if (result)
-                                        collectionArray.push({ name: value, oldName: collection, database, db: 'mongodb' })
+                                        arrayArray.push({ name: value, oldName: array, database, db: 'mongodb' })
 
-                                    collectionsLength -= 1
-                                    if (!collectionsLength)
+                                    arraysLength -= 1
+                                    if (!arraysLength)
                                         databasesLength -= 1
 
-                                    if (!databasesLength && !collectionsLength) {
-                                        data = createData(data, collectionArray, type)
+                                    if (!databasesLength && !arraysLength) {
+                                        data = createData(data, arrayArray, type)
                                         resolve(data)
                                     }
 
@@ -208,19 +208,19 @@ function collection(action, data) {
                             }
 
                             if (action == 'deleteCollection') {
-                                collectionObj.drop(function (error, result) {
+                                arrayObj.drop(function (error, result) {
                                     if (error)
-                                        errorHandler(data, error, database, collection)
+                                        errorHandler(data, error, database, array)
 
                                     if (result)
-                                        collectionArray.push({ name: collection, database, db: 'mongodb' })
+                                        arrayArray.push({ name: array, database, db: 'mongodb' })
 
-                                    collectionsLength -= 1
-                                    if (!collectionsLength)
+                                    arraysLength -= 1
+                                    if (!arraysLength)
                                         databasesLength -= 1
 
-                                    if (!databasesLength && !collectionsLength) {
-                                        data = createData(data, collectionArray, type)
+                                    if (!databasesLength && !arraysLength) {
+                                        data = createData(data, arrayArray, type)
                                         resolve(data)
                                     }
 
@@ -244,20 +244,20 @@ function collection(action, data) {
 }
 
 
-function createDocument(data) {
-    return document('createDocument', data)
+function createObject(data) {
+    return document('createObject', data)
 }
 
-function readDocument(data) {
-    return document('readDocument', data)
+function readObject(data) {
+    return document('readObject', data)
 }
 
-function updateDocument(data) {
-    return document('updateDocument', data)
+function updateObject(data) {
+    return document('updateObject', data)
 }
 
-function deleteDocument(data) {
-    return document('deleteDocument', data)
+function deleteObject(data) {
+    return document('deleteObject', data)
 }
 
 function document(action, data) {
@@ -287,14 +287,14 @@ function document(action, data) {
 
             let databasesLength = databases.length
             for (let database of databases) {
-                let collections = data.collection;
-                if (!Array.isArray(collections))
-                    collections = [collections]
+                let arrays = data.array;
+                if (!Array.isArray(arrays))
+                    arrays = [arrays]
 
-                let collectionsLength = collections.length
-                for (let collection of collections) {
+                let arraysLength = arrays.length
+                for (let array of arrays) {
                     const db = client.db(database);
-                    const collectionObj = db.collection(collection);
+                    const arrayObj = db.array(array);
 
                     let { query, sort } = getFilters(data);
                     if (data['organization_id']) {
@@ -313,7 +313,7 @@ function document(action, data) {
                             data[type][i]['organization_id'] = data['organization_id'];
 
 
-                            if (action == 'createDocument') {
+                            if (action == 'createObject') {
                                 data[type][i] = dotNotationToObject(data[type][i])
 
                                 if (!data[type][i]._id)
@@ -322,10 +322,10 @@ function document(action, data) {
                                     data[type][i]._id = ObjectId(data[type][i]._id)
                                 data[type][i]['created'] = { on: data.timeStamp, by: data.user_id || data.clientId }
                             }
-                            if (action == 'readDocument' && data[type][i]._id) {
+                            if (action == 'readObject' && data[type][i]._id) {
                                 _ids.push(ObjectId(data[type][i]._id))
                             }
-                            if (action == 'updateDocument') {
+                            if (action == 'updateObject') {
                                 if (data[type][i]._id)
                                     update_ids.push({ _id: data[type][i]._id, updateDoc: data[type][i], updateType: '_id' })
 
@@ -335,10 +335,10 @@ function document(action, data) {
                                 data[type][i]['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
 
                             }
-                            if (action == 'deleteDocument') {
+                            if (action == 'deleteObject') {
                                 if (data[type][i]._id) {
                                     _ids.push(ObjectId(data[type][i]._id))
-                                    documents.push({ _id: data[type][i]._id, db: 'mongodb', database, collection })
+                                    documents.push({ _id: data[type][i]._id, db: 'mongodb', database, array })
                                 }
                             }
                         }
@@ -349,29 +349,29 @@ function document(action, data) {
                     }
 
 
-                    if (action == 'createDocument') {
-                        collectionObj.insertMany(data[type], function (error, result) {
+                    if (action == 'createObject') {
+                        arrayObj.insertMany(data[type], function (error, result) {
                             if (error)
-                                errorHandler(data, error, database, collection)
+                                errorHandler(data, error, database, array)
 
                             for (let i = 0; i < data[type].length; i++)
-                                documents.push({ db: 'mongodb', database, collection, ...data[type][i] })
+                                documents.push({ db: 'mongodb', database, array, ...data[type][i] })
 
-                            collectionsLength -= 1
-                            if (!collectionsLength)
+                            arraysLength -= 1
+                            if (!arraysLength)
                                 databasesLength -= 1
 
-                            if (!databasesLength && !collectionsLength) {
+                            if (!databasesLength && !arraysLength) {
                                 data = createData(data, documents, type)
                                 resolve(data)
                             }
                         });
                     }
 
-                    if (action == 'readDocument') {
+                    if (action == 'readObject') {
                         let index = 0, limit = 0
                         if (data.filter) {
-                            const count = await collectionObj.estimatedDocumentCount()
+                            const count = await arrayObj.estimatedDocumentCount()
                             data.filter.count = count
 
                             if (data.filter.index)
@@ -382,9 +382,9 @@ function document(action, data) {
                                 limit = index + limit;
                         }
 
-                        collectionObj.find(query).skip(index).limit(limit).sort(sort).toArray(function (error, result) {
+                        arrayObj.find(query).skip(index).limit(limit).sort(sort).toArray(function (error, result) {
                             if (error)
-                                errorHandler(data, error, database, collection)
+                                errorHandler(data, error, database, array)
 
                             if (result) {
                                 // TODO: forEach at cursor
@@ -395,10 +395,10 @@ function document(action, data) {
                                     if (isMatch) {
                                         doc.storage = 'mongodb'
                                         doc.database = database
-                                        doc.collection = collection
+                                        doc.array = array
                                         doc._id = doc._id.toString()
 
-                                        if (data.returnDocument == false) {
+                                        if (data.returnObject == false) {
                                             let tempDoc = {};
                                             let docs = new Map(data[type].map((obj) => [obj._id, obj]));
                                             let doc1 = docs.get(doc._id)
@@ -420,24 +420,24 @@ function document(action, data) {
                                 // }
                             }
 
-                            collectionsLength -= 1
-                            if (!collectionsLength)
+                            arraysLength -= 1
+                            if (!arraysLength)
                                 databasesLength -= 1
 
-                            if (!databasesLength && !collectionsLength) {
+                            if (!databasesLength && !arraysLength) {
                                 data = createData(data, documents, type)
                                 resolve(data)
                             }
                         });
                     }
 
-                    if (action == 'updateDocument' || action == 'deleteDocument') {
+                    if (action == 'updateObject' || action == 'deleteObject') {
                         const queryDocs = () => {
                             return new Promise(async (resolve, reject) => {
 
-                                collectionObj.find(query).sort(sort).toArray(function (error, result) {
+                                arrayObj.find(query).sort(sort).toArray(function (error, result) {
                                     if (error)
-                                        errorHandler(data, error, database, collection)
+                                        errorHandler(data, error, database, array)
 
                                     if (data.filter && data.filter.search) {
                                         let searchResult = []
@@ -458,14 +458,14 @@ function document(action, data) {
 
                         let Result, $update, update, projection;
 
-                        if (isFilter && data.returnDocument != false)
-                            if (action == 'deleteDocument' || action == 'updateDocument' && updateData.update)
+                        if (isFilter && data.returnObject != false)
+                            if (action == 'deleteObject' || action == 'updateObject' && updateData.update)
                                 Result = await queryDocs()
 
                         if (Result) {
                             for (let doc of Result) {
-                                if (action == 'deleteDocument')
-                                    documents.push({ _id: doc._id, db: 'mongodb', database, collection })
+                                if (action == 'deleteObject')
+                                    documents.push({ _id: doc._id, db: 'mongodb', database, array })
                                 else
                                     doc['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
 
@@ -474,7 +474,7 @@ function document(action, data) {
                             update_ids.push({ updateType: 'filter' })
                         }
 
-                        if (action == 'updateDocument') {
+                        if (action == 'updateObject') {
                             let docsLength = update_ids.length
                             for (let { updateDoc, updateType } of update_ids) {
 
@@ -484,7 +484,7 @@ function document(action, data) {
                                     $update = createUpdate({ document: [updateDoc] }, type)
                                     update = $update.update
                                     projection = $update.projection
-                                    documents.push({ _id: update_id, db: 'mongodb', database, collection, ...update['$set'] })
+                                    documents.push({ _id: update_id, db: 'mongodb', database, array, ...update['$set'] })
                                 }
 
                                 if (updateType == 'filter') {
@@ -493,29 +493,29 @@ function document(action, data) {
                                     update = $update.update
                                     projection = $update.projection
                                     for (let _id of _ids)
-                                        documents.push({ _id, db: 'mongodb', database, collection, ...update['$set'] })
+                                        documents.push({ _id, db: 'mongodb', database, array, ...update['$set'] })
 
                                 }
 
                                 update['$set']['organization_id'] = data.organization_id
 
-                                collectionObj.updateMany(query, update, {
+                                arrayObj.updateMany(query, update, {
                                     upsert: data.upsert,
                                     projection
                                 }).then((result) => {
 
                                 }).catch((error) => {
-                                    errorHandler(data, error, database, collection)
+                                    errorHandler(data, error, database, array)
                                     console.log(action, 'error', error);
                                 }).finally((error) => {
                                     docsLength -= 1
                                     if (!docsLength)
-                                        collectionsLength -= 1
+                                        arraysLength -= 1
 
-                                    if (!collectionsLength)
+                                    if (!arraysLength)
                                         databasesLength -= 1
 
-                                    if (!databasesLength && !collectionsLength) {
+                                    if (!databasesLength && !arraysLength) {
                                         data = createData(data, documents, type)
                                         resolve(data)
                                     }
@@ -525,12 +525,12 @@ function document(action, data) {
                             if (!update_ids.length) {
                                 docsLength -= 1
                                 if (!docsLength)
-                                    collectionsLength -= 1
+                                    arraysLength -= 1
 
-                                if (!collectionsLength)
+                                if (!arraysLength)
                                     databasesLength -= 1
 
-                                if (!databasesLength && !collectionsLength) {
+                                if (!databasesLength && !arraysLength) {
                                     data = createData(data, documents, type)
                                     resolve(data)
                                 }
@@ -538,17 +538,17 @@ function document(action, data) {
 
                         }
 
-                        if (action == 'deleteDocument') {
+                        if (action == 'deleteObject') {
                             if (_ids.length == 1)
                                 query['_id'] = ObjectId(_ids[0])
                             else if (_ids.length > 0)
                                 query['_id'] = { $in: _ids }
-                            collectionObj.deleteMany(query, function (error, result) {
-                                collectionsLength -= 1
-                                if (!collectionsLength)
+                            arrayObj.deleteMany(query, function (error, result) {
+                                arraysLength -= 1
+                                if (!arraysLength)
                                     databasesLength -= 1
 
-                                if (!databasesLength && !collectionsLength) {
+                                if (!databasesLength && !arraysLength) {
                                     data = createData(data, documents, type)
                                     resolve(data)
                                 }
@@ -750,7 +750,7 @@ function createQuery(filters) {
     return query;
 }
 
-function errorHandler(data, error, database, collection) {
+function errorHandler(data, error, database, array) {
     if (typeof error == 'object')
         error['storage'] = 'mongodb'
     else
@@ -758,8 +758,8 @@ function errorHandler(data, error, database, collection) {
 
     if (database)
         error['database'] = database
-    if (collection)
-        error['collection'] = collection
+    if (array)
+        error['array'] = array
     if (data.error)
         data.error.push(error)
     else
@@ -798,8 +798,8 @@ module.exports = {
     updateCollection,
     deleteCollection,
 
-    createDocument,
-    readDocument,
-    updateDocument,
-    deleteDocument,
+    createObject,
+    readObject,
+    updateObject,
+    deleteObject,
 }
