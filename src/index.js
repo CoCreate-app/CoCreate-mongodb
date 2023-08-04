@@ -664,7 +664,7 @@ function getFilters(data) {
             else
                 direction = 1;
 
-            sort[filter.sort[i].name] = filter.sort[i].direction
+            sort[filter.sort[i].key] = filter.sort[i].direction
         }
     }
     return { query, sort }
@@ -677,17 +677,17 @@ function createQuery(filters) {
 
     for (let item of filters) {
 
-        if (!item.name)
+        if (!item.key)
             continue
 
-        if (item.name == "_id") {
+        if (item.key == "_id") {
             if (item.value)
                 item.value = ObjectId(item.value)
             else
                 continue
         }
 
-        let key = item.name;
+        let key = item.key;
         if (!query[key]) {
             query[key] = {};
         }
