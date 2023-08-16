@@ -1,3 +1,18 @@
+# [1.5.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.18...v1.5.0) (2023-08-16)
+
+
+### Bug Fixes
+
+* crud attributes renamed ([08ecbf2](https://github.com/CoCreate-app/CoCreate-mongodb/commit/08ecbf218203a2d08dad7ac298aa8b4feeb09452))
+* Refactored *-target to *-selector ([9fa3212](https://github.com/CoCreate-app/CoCreate-mongodb/commit/9fa3212a4994c08b58c978620ed3f763ba8ea8db))
+* startIndex variable renamed to index  and comment out unnecessary code. ([b20bf7a](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b20bf7a1beae3345e64af432c9651e686b78690f))
+* webpack.config and package.json make use of mode=production instead of process.env ([22a2454](https://github.com/CoCreate-app/CoCreate-mongodb/commit/22a24544bc29be1d83cb6acae750619a6b14cdb3))
+
+
+### Features
+
+* name attribute and variable renamed to key ([79e1c03](https://github.com/CoCreate-app/CoCreate-mongodb/commit/79e1c039924b2a013d8c2de2e83eb807443e0d65))
+
 ## [1.4.18](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.4.17...v1.4.18) (2023-06-14)
 
 
