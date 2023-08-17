@@ -185,7 +185,7 @@ function array(action, data) {
                                 [array, value] = array
                             }
 
-                            const arrayObj = db.array(array);
+                            const arrayObj = db.collection(array);
 
                             if (action == 'updateCollection') {
                                 arrayObj.rename(value, function (error, result) {
@@ -294,7 +294,7 @@ function document(action, data) {
                 let arraysLength = arrays.length
                 for (let array of arrays) {
                     const db = client.db(database);
-                    const arrayObj = db.array(array);
+                    const arrayObj = db.collection(array);
 
                     let { query, sort } = getFilters(data);
                     if (data['organization_id']) {
