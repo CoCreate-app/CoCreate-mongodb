@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.0...v1.6.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* typo db.array to db.collection ([1561ab9](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1561ab9ad137dcb52575e804ced3659309701550))
+
 # [1.6.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.5.0...v1.6.0) (2023-08-17)
 
 
