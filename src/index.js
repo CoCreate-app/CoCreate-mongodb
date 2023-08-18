@@ -245,28 +245,28 @@ function array(action, data) {
 
 
 function createObject(data) {
-    return document('createObject', data)
+    return object('createObject', data)
 }
 
 function readObject(data) {
-    return document('readObject', data)
+    return object('readObject', data)
 }
 
 function updateObject(data) {
-    return document('updateObject', data)
+    return object('updateObject', data)
 }
 
 function deleteObject(data) {
-    return document('deleteObject', data)
+    return object('deleteObject', data)
 }
 
-function document(action, data) {
+function object(action, data) {
     return new Promise(async (resolve, reject) => {
         try {
             const client = await dbClient(data)
             if (!client) return
 
-            let type = 'document'
+            let type = 'object'
             let documents = [];
 
             if (data.request)
