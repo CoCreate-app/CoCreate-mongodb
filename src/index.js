@@ -330,7 +330,7 @@ function object(action, data) {
                                     update_ids.push({ _id: data[type][i]._id, updateDoc: data[type][i], updateType: '_id' })
 
                                 if (!data[type][i]._id)
-                                    updateData = createUpdate({ document: [data[type][i]] }, type)
+                                    updateData = createUpdate({ object: [data[type][i]] }, type)
 
                                 data[type][i]['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
 
@@ -481,7 +481,7 @@ function object(action, data) {
                                 if (updateType == '_id') {
                                     let update_id = updateDoc._id
                                     query['_id'] = ObjectId(update_id)
-                                    $update = createUpdate({ document: [updateDoc] }, type)
+                                    $update = createUpdate({ object: [updateDoc] }, type)
                                     update = $update.update
                                     projection = $update.projection
                                     documents.push({ _id: update_id, db: 'mongodb', database, array, ...update['$set'] })
