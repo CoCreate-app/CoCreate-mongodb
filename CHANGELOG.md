@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.1...v1.6.2) (2023-08-18)
+
+
+### Bug Fixes
+
+* type updated to object ([75313f5](https://github.com/CoCreate-app/CoCreate-mongodb/commit/75313f5c97cc16a7dca993127f4abb6b119fcd3c))
+
 ## [1.6.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.0...v1.6.1) (2023-08-17)
 
 
