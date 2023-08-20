@@ -4,12 +4,12 @@ const clients = new Map()
 
 
 async function dbClient(data) {
-    if (data.dbUrl) {
-        let client = clients.get(data.dbUrl)
+    if (data.storageUrl) {
+        let client = clients.get(data.storageUrl)
         if (!client) {
             try {
-                client = MongoClient.connect(data.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-                clients.set(data.dbUrl, client)
+                client = MongoClient.connect(data.storageUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+                clients.set(data.storageUrl, client)
             } catch (error) {
                 console.error(error)
                 return { status: false }
@@ -23,9 +23,14 @@ async function dbClient(data) {
 async function databaseStats(data) {
     const client = await dbClient(data)
     if (!client) return
-    let db = client.db(data.organization_id)
-    let stats = db.stats()
-    return stats
+    const db = client.db(data.organization_id)
+    const stats = await db.stats()
+    stats.storage = data.storageName
+    if (!data.stats)
+        data.stats = [stats]
+    else
+        data.stats.push(stats)
+    return data
 }
 
 function createDatabase(data) {
@@ -62,9 +67,9 @@ function database(action, data) {
                         if (data.filter && data.filter.query) {
                             let isFilter = queryData(database, data.filter.query)
                             if (isFilter)
-                                databaseArray.push({ database, db: 'mongodb' })
+                                databaseArray.push({ database, storage: data.storageName })
                         } else
-                            databaseArray.push({ database, db: 'mongodb' })
+                            databaseArray.push({ database, storage: data.storageName })
                     }
 
                     resolve(createData(data, databaseArray, type))
@@ -137,9 +142,9 @@ function array(action, data) {
                                 if (data.filter && data.filter.query) {
                                     let isFilter = queryData(res, data.filter.query)
                                     if (isFilter)
-                                        arrayArray.push({ name: res.name, database, db: 'mongodb' })
+                                        arrayArray.push({ name: res.name, database, storage: data.storageName })
                                 } else
-                                    arrayArray.push({ name: res.name, database, db: 'mongodb' })
+                                    arrayArray.push({ name: res.name, database, storage: data.storageName })
                             }
                         }
 
@@ -169,7 +174,7 @@ function array(action, data) {
                                     errorHandler(data, error, database, array)
 
                                 if (result)
-                                    arrayArray.push({ name: array, database, db: 'mongodb' })
+                                    arrayArray.push({ name: array, database, storage: data.storageName })
 
                                 arraysLength -= 1
                                 if (!arraysLength)
@@ -193,7 +198,7 @@ function array(action, data) {
                                         errorHandler(data, error, database, array)
 
                                     if (result)
-                                        arrayArray.push({ name: value, oldName: array, database, db: 'mongodb' })
+                                        arrayArray.push({ name: value, oldName: array, database, storage: data.storageName })
 
                                     arraysLength -= 1
                                     if (!arraysLength)
@@ -213,7 +218,7 @@ function array(action, data) {
                                         errorHandler(data, error, database, array)
 
                                     if (result)
-                                        arrayArray.push({ name: array, database, db: 'mongodb' })
+                                        arrayArray.push({ name: array, database, storage: data.storageName })
 
                                     arraysLength -= 1
                                     if (!arraysLength)
@@ -338,7 +343,7 @@ function object(action, data) {
                             if (action == 'deleteObject') {
                                 if (data[type][i]._id) {
                                     _ids.push(ObjectId(data[type][i]._id))
-                                    documents.push({ _id: data[type][i]._id, db: 'mongodb', database, array })
+                                    documents.push({ _id: data[type][i]._id, storage: data.storageName, database, array })
                                 }
                             }
                         }
@@ -355,7 +360,7 @@ function object(action, data) {
                                 errorHandler(data, error, database, array)
 
                             for (let i = 0; i < data[type].length; i++)
-                                documents.push({ db: 'mongodb', database, array, ...data[type][i] })
+                                documents.push({ storage: data.storageName, database, array, ...data[type][i] })
 
                             arraysLength -= 1
                             if (!arraysLength)
@@ -465,7 +470,7 @@ function object(action, data) {
                         if (Result) {
                             for (let doc of Result) {
                                 if (action == 'deleteObject')
-                                    documents.push({ _id: doc._id, db: 'mongodb', database, array })
+                                    documents.push({ _id: doc._id, storage: data.storageName, database, array })
                                 else
                                     doc['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
 
@@ -484,7 +489,7 @@ function object(action, data) {
                                     $update = createUpdate({ object: [updateDoc] }, type)
                                     update = $update.update
                                     projection = $update.projection
-                                    documents.push({ _id: update_id, db: 'mongodb', database, array, ...update['$set'] })
+                                    documents.push({ _id: update_id, storage: data.storageName, database, array, ...update['$set'] })
                                 }
 
                                 if (updateType == 'filter') {
@@ -493,7 +498,7 @@ function object(action, data) {
                                     update = $update.update
                                     projection = $update.projection
                                     for (let _id of _ids)
-                                        documents.push({ _id, db: 'mongodb', database, array, ...update['$set'] })
+                                        documents.push({ _id, storage: data.storageName, database, array, ...update['$set'] })
 
                                 }
 
@@ -754,7 +759,7 @@ function errorHandler(data, error, database, array) {
     if (typeof error == 'object')
         error['storage'] = 'mongodb'
     else
-        error = { db: 'mongodb', message: error }
+        error = { storage: data.storageName, message: error }
 
     if (database)
         error['database'] = database
