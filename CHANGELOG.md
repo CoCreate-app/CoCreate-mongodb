@@ -1,3 +1,14 @@
+## [1.6.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.2...v1.6.3) (2023-08-21)
+
+
+### Bug Fixes
+
+* /dist/CoCreate.js updated to https://CoCreate.app/dist/CoCreate.js ([553bfe6](https://github.com/CoCreate-app/CoCreate-mongodb/commit/553bfe6036c0f7705e7f993f7e65b9adb625f66f))
+* document to object ([1780f64](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1780f6452ae3ba9f4eb3e4876b77695269cb1428))
+* renamed dbUrl to storageUrl and add storage name to responses ([ace186f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/ace186f252d624ab4535d81817a0262f112c699b))
+* replace cdn with /dist ([a4d3773](https://github.com/CoCreate-app/CoCreate-mongodb/commit/a4d377343b646154902ce07799a890d7e31857e1))
+* update file uploader ([e6e1dbe](https://github.com/CoCreate-app/CoCreate-mongodb/commit/e6e1dbe31990e7e6cbfa94d4faf62cacbdf289c3))
+
 ## [1.6.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.1...v1.6.2) (2023-08-18)
 
 
