@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.3...v1.7.0) (2023-08-21)
+
+
+### Features
+
+* Update cocreate dependencies for the latest features and bug fixes ([f37dca6](https://github.com/CoCreate-app/CoCreate-mongodb/commit/f37dca6514c1636e266ae84c72b83155f9881d2f))
+
 ## [1.6.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.6.2...v1.6.3) (2023-08-21)
 
 
