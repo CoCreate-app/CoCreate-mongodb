@@ -538,23 +538,70 @@ function createUpdate(data, type, index) {
             delete update['$set']['_id']
 
         Object.keys(update['$set']).forEach(key => {
-            if (key.includes('$inc')) {
+            if (key.includes('$rename') || key.includes('$update')) {
+
+            } else if (key.includes('$delete')) {
+
+            } else if (key.includes('$inc')) {
                 update['$inc'] = update['$set'][key]
                 delete update['$set'][key]
-            } else if (key.includes('[u]')) {
-                update['$addToSet'] = { [key.replace('[u]', '')]: update['$set'][key] }
-                delete update['$set'][key]
-            } else if (key.includes('[]')) {
-                if (!Array.isArray(update['$set'][key]))
-                    update['$set'][key] = [update['$set'][key]]
+            } else if (key.endsWith(']')) {
+                // Use a regular expression to extract the key and index (including a potentially undefined or keyword index)
+                const regex = /^(.*(?:\[\d+\].*?)?)\[(.*?)\](?:\[\])?$/;
+                const match = inputString.match(regex);
+                const index = parseInt(match[2], 10);
 
-                update['$push'] = {
-                    [key.replace('[]', '')]: { $each: update['$set'][key] }
+                if (index && index !== -1 && index !== 1 && update['$set'][key] === '$delete') {
+                    match[1] = replaceArray({ [update['$set'][key]]: update['$set'][key] });
+                    match[1] = Object.keys(match[1])[0]
+
+                    if (!update['$unset'])
+                        update['$unset'] = {}
+
+                    update.$unset[match[1]] = 1;
+
+                    if (!update['$pull'])
+                        update['$pull'] = {}
+
+                    update.$pull[match[1]] = null;
+                } else {
+                    match[1] = replaceArray({ [match[1]]: update['$set'][key] });
+                    match[1] = Object.keys(match[1])[0]
+
+                    if (update['$set'][key] === '$pop' || update['$set'][key] === '$delete') {
+                        if (!update['$pop'])
+                            update['$pop'] = {}
+
+                        update.$pop[match[1]] = index || 1
+                    } else if (match[2] === '$addToSet') {
+                        if (!update['$addToSet'])
+                            update['$addToSet'] = {}
+
+                        update.$addToSet[match[1]] = update['$set'][key]
+                    } else if (match[2] === '$pull') {
+                        if (!update['$pull'])
+                            update['$pull'] = {}
+
+                        update.$pull[match[1]] = update['$set'][key]
+                    } else {
+                        if (!Array.isArray(update['$set'][key]))
+                            update['$set'][key] = [update['$set'][key]]
+
+                        let insert = { $each: update['$set'][key] }
+                        if (index)
+                            insert.$postion = match[2]
+
+                        if (!update['$push'])
+                            update['$push'] = {}
+
+                        update.$push[match[1]] = insert
+
+                    }
                 }
+
                 delete update['$set'][key]
+
             }
-            // { $push: { "skills": { $each: ["Sports", "Acting"] } } })
-            // { $addToSet: { "skills": "GST" } }) // adds "GST"to all arrays if the item does not exist
             projection[key] = 1
         })
     }
