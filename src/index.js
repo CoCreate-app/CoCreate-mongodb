@@ -131,7 +131,7 @@ function array(action, data) {
 
                 if (action == 'readCollection') {
 
-                    let { query, sort } = getFilters(data);
+                    let { query, sort } = await getFilters(data);
 
                     db.listCollections().toArray(function (error, result) {
                         if (error)
@@ -277,14 +277,8 @@ function object(action, data) {
             if (data.request)
                 data[type] = data.request
 
-
             if (!data['timeStamp'])
                 data['timeStamp'] = new Date().toISOString()
-
-
-            let isFilter
-            if (data.filter && data.filter.query)
-                isFilter = true
 
             let databases = data.database;
             if (!Array.isArray(databases))
@@ -301,60 +295,22 @@ function object(action, data) {
                     const db = client.db(database);
                     const arrayObj = db.collection(array);
 
-                    let { query, sort } = getFilters(data);
-                    if (data['organization_id']) {
-                        query['organization_id'] = { $eq: data['organization_id'] }
-                    }
-
-                    let _ids = []
-                    let update_ids = []
-                    let updateData = {}
-
-                    if (data[type]) {
-                        if (!Array.isArray(data[type]))
-                            data[type] = [data[type]]
-                        for (let i = 0; i < data[type].length; i++) {
-                            data[type][i] = replaceArray(data[type][i])
-                            data[type][i]['organization_id'] = data['organization_id'];
-
-
-                            if (action == 'createObject') {
-                                data[type][i] = dotNotationToObject(data[type][i])
-
-                                if (!data[type][i]._id)
-                                    data[type][i]._id = ObjectId()
-                                else
-                                    data[type][i]._id = ObjectId(data[type][i]._id)
-                                data[type][i]['created'] = { on: data.timeStamp, by: data.user_id || data.clientId }
-                            }
-                            if (action == 'readObject' && data[type][i]._id) {
-                                _ids.push(ObjectId(data[type][i]._id))
-                            }
-                            if (action == 'updateObject') {
-                                if (data[type][i]._id)
-                                    update_ids.push({ _id: data[type][i]._id, updateDoc: data[type][i], updateType: '_id' })
-
-                                if (!data[type][i]._id)
-                                    updateData = createUpdate({ object: [data[type][i]] }, type)
-
-                                data[type][i]['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
-
-                            }
-                            if (action == 'deleteObject') {
-                                if (data[type][i]._id) {
-                                    _ids.push(ObjectId(data[type][i]._id))
-                                    documents.push({ _id: data[type][i]._id, storage: data.storageName, database, array })
-                                }
-                            }
-                        }
-                        if (_ids.length == 1)
-                            query['_id'] = ObjectId(_ids[0])
-                        else if (_ids.length > 0)
-                            query['_id'] = { $in: _ids }
-                    }
-
+                    if (data[type] && !Array.isArray(data[type]))
+                        data[type] = [data[type]]
 
                     if (action == 'createObject') {
+                        for (let i = 0; i < data[type].length; i++) {
+                            data[type][i] = replaceArray(data[type][i])
+                            data[type][i] = dotNotationToObject(data[type][i])
+                            data[type][i]['organization_id'] = data['organization_id'];
+
+                            if (!data[type][i]._id)
+                                data[type][i]._id = ObjectId()
+                            else
+                                data[type][i]._id = ObjectId(data[type][i]._id)
+                            data[type][i]['created'] = { on: data.timeStamp, by: data.user_id || data.clientId }
+                        }
+
                         arrayObj.insertMany(data[type], function (error, result) {
                             if (error)
                                 errorHandler(data, error, database, array)
@@ -371,58 +327,63 @@ function object(action, data) {
                                 resolve(data)
                             }
                         });
-                    }
+                    } else {
+                        let isFilter
+                        if (data.filter && data.filter.query)
+                            isFilter = true
 
-                    if (action == 'readObject') {
-                        let index = 0, limit = 0
-                        if (data.filter) {
-                            const count = await arrayObj.estimatedDocumentCount()
-                            data.filter.count = count
+                        let { query, sort, index, limit } = await getFilters(data, arrayObj);
 
-                            if (data.filter.index)
-                                index = data.filter.index
-                            if (data.filter.limit)
-                                limit = data.filter.limit
-                            if (limit)
-                                limit = index + limit;
-                        }
-
-                        arrayObj.find(query).skip(index).limit(limit).sort(sort).toArray(function (error, result) {
-                            if (error)
-                                errorHandler(data, error, database, array)
-
-                            if (result) {
-                                // TODO: forEach at cursor
-                                for (let doc of result) {
-                                    let isMatch = true
-                                    if (data.filter && data.filter['search'])
-                                        isMatch = searchData(doc, data.filter['search'])
-                                    if (isMatch) {
-                                        doc.storage = 'mongodb'
-                                        doc.database = database
-                                        doc.array = array
-                                        doc._id = doc._id.toString()
-
-                                        if (data.returnObject == false) {
-                                            let tempDoc = {};
-                                            let docs = new Map(data[type].map((obj) => [obj._id, obj]));
-                                            let doc1 = docs.get(doc._id)
-                                            if (doc1) {
-                                                tempDoc._id = tempDoc
-                                                for (let key of Object.keys(doc1)) {
-                                                    tempDoc[key] = doc[key]
-                                                }
-                                                doc = tempDoc
-                                            }
-                                        }
-
-                                        documents.push(doc)
+                        if (action == 'readObject') {
+                            if (data[type]) {
+                                let _ids = []
+                                for (let i = 0; i < data[type].length; i++) {
+                                    data[type][i] = replaceArray(data[type][i])
+                                    if (data[type][i]._id) {
+                                        _ids.push(ObjectId(data[type][i]._id))
                                     }
                                 }
 
-                                // if (index && limit) {
-                                //     documents = documents.slice(index, limit)
-                                // }
+                                if (_ids.length == 1)
+                                    query['_id'] = _ids[0]
+                                else if (_ids.length > 0)
+                                    query['_id'] = { $in: _ids }
+
+                            }
+
+                            try {
+                                const cursor = arrayObj.find(query).sort(sort).skip(index).limit(limit);
+                                while (await cursor.hasNext()) {
+                                    const document = await cursor.next();
+
+                                    if (data.filter && data.filter.search) {
+                                        let isMatch = searchData(document, data.filter.search)
+                                        if (!isMatch)
+                                            continue;
+                                    }
+
+                                    document.storage = 'mongodb'
+                                    document.database = database
+                                    document.array = array
+                                    document._id = document._id.toString()
+
+                                    if (data.returnObject == false) {
+                                        let tempDoc = {};
+                                        let docs = new Map(data[type].map((obj) => [obj._id, obj]));
+                                        let doc1 = docs.get(document._id)
+                                        if (doc1) {
+                                            tempDoc._id = tempDoc
+                                            for (let key of Object.keys(doc1)) {
+                                                tempDoc[key] = document[key]
+                                            }
+                                            document = tempDoc
+                                        }
+                                    }
+
+                                    documents.push(document)
+                                }
+                            } catch (error) {
+                                errorHandler(data, error, database, array)
                             }
 
                             arraysLength -= 1
@@ -433,104 +394,10 @@ function object(action, data) {
                                 data = createData(data, documents, type)
                                 resolve(data)
                             }
-                        });
-                    }
+                        } else if (action == 'updateObject') {
 
-                    if (action == 'updateObject' || action == 'deleteObject') {
-                        const queryDocs = () => {
-                            return new Promise(async (resolve, reject) => {
-
-                                arrayObj.find(query).sort(sort).toArray(function (error, result) {
-                                    if (error)
-                                        errorHandler(data, error, database, array)
-
-                                    if (data.filter && data.filter.search) {
-                                        let searchResult = []
-
-                                        for (let doc of result) {
-                                            let isMatch = searchData(doc, data.filter.search)
-                                            if (isMatch)
-                                                searchResult.push(doc)
-                                        }
-                                        result = searchResult
-                                    }
-                                    resolve(result)
-                                })
-                            }, (err) => {
-                                console.log(err);
-                            });
-                        }
-
-                        let Result, $update, update, projection;
-
-                        if (isFilter && data.returnObject != false)
-                            if (action == 'deleteObject' || action == 'updateObject' && updateData.update)
-                                Result = await queryDocs()
-
-                        if (Result) {
-                            for (let doc of Result) {
-                                if (action == 'deleteObject')
-                                    documents.push({ _id: doc._id, storage: data.storageName, database, array })
-                                else
-                                    doc['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
-
-                                _ids.push(doc._id)
-                            }
-                            update_ids.push({ updateType: 'filter' })
-                        }
-
-                        if (action == 'updateObject') {
-                            let docsLength = update_ids.length
-                            for (let { updateDoc, updateType } of update_ids) {
-
-                                if (updateType == '_id') {
-                                    let update_id = updateDoc._id
-                                    query['_id'] = ObjectId(update_id)
-                                    $update = createUpdate({ object: [updateDoc] }, type)
-                                    update = $update.update
-                                    projection = $update.projection
-                                    documents.push({ _id: update_id, storage: data.storageName, database, array, ...update['$set'] })
-                                }
-
-                                if (updateType == 'filter') {
-                                    query['_id'] = { $in: _ids }
-                                    $update = updateData
-                                    update = $update.update
-                                    projection = $update.projection
-                                    for (let _id of _ids)
-                                        documents.push({ _id, storage: data.storageName, database, array, ...update['$set'] })
-
-                                }
-
-                                update['$set']['organization_id'] = data.organization_id
-
-                                arrayObj.updateMany(query, update, {
-                                    upsert: data.upsert,
-                                    projection
-                                }).then((result) => {
-
-                                }).catch((error) => {
-                                    errorHandler(data, error, database, array)
-                                    console.log(action, 'error', error);
-                                }).finally((error) => {
-                                    docsLength -= 1
-                                    if (!docsLength)
-                                        arraysLength -= 1
-
-                                    if (!arraysLength)
-                                        databasesLength -= 1
-
-                                    if (!databasesLength && !arraysLength) {
-                                        data = createData(data, documents, type)
-                                        resolve(data)
-                                    }
-                                })
-                            }
-
-                            if (!update_ids.length) {
-                                docsLength -= 1
-                                if (!docsLength)
-                                    arraysLength -= 1
+                            if (!data[type].length) {
+                                arraysLength -= 1
 
                                 if (!arraysLength)
                                     databasesLength -= 1
@@ -541,13 +408,97 @@ function object(action, data) {
                                 }
                             }
 
-                        }
+                            let docsLength = data[type].length
+                            for (let i = 0; i < data[type].length; i++) {
+                                if (data[type][i]._id)
+                                    query['_id'] = ObjectId(data[type][i]._id)
 
-                        if (action == 'deleteObject') {
+                                data[type][i] = replaceArray(data[type][i])
+                                let { update, projection } = createUpdate(data, type, i)
+
+                                if (query['_id']) {
+                                    arrayObj.updateOne(query, update, {
+                                        upsert: data.upsert,
+                                        projection
+                                    }).then((result) => {
+                                        documents.push({ _id: query['_id'].toString(), storage: data.storageName, database, array, ...update['$set'] })
+                                    }).catch((error) => {
+                                        errorHandler(data, error, database, array)
+                                        console.log(action, 'error', error);
+                                    }).finally(() => {
+                                        docsLength -= 1
+                                        if (!docsLength)
+                                            arraysLength -= 1
+
+                                        if (!arraysLength)
+                                            databasesLength -= 1
+
+                                        if (!databasesLength && !arraysLength) {
+                                            data = createData(data, documents, type)
+                                            resolve(data)
+                                        }
+                                    })
+                                } else if (update && isFilter) {
+                                    const cursor = arrayObj.find(query).sort(sort).skip(index).limit(limit);
+                                    while (await cursor.hasNext()) {
+                                        const document = await cursor.next();
+
+                                        if (data.filter && data.filter.search) {
+                                            let isMatch = searchData(document, data.filter.search)
+                                            if (!isMatch)
+                                                continue;
+                                        }
+
+                                        arrayObj.updateOne({ _id: document._id }, update, {
+                                            upsert: data.upsert,
+                                            projection
+                                        }).then((result) => {
+                                            if (data.returnObject != false)
+                                                documents.push({ _id: document._id, storage: data.storageName, database, array, ...update['$set'] })
+                                        }).catch((error) => {
+                                            errorHandler(data, error, database, array)
+                                            console.log(action, 'error', error);
+                                        })
+                                    }
+                                }
+                            }
+                        } else if (action == 'deleteObject') {
+                            if (isFilter && data.returnObject != false) {
+                                const cursor = arrayObj.find(query).sort(sort).skip(index).limit(limit);
+                                while (await cursor.hasNext()) {
+                                    const document = await cursor.next();
+
+                                    if (data.filter && data.filter.search) {
+                                        let isMatch = searchData(document, data.filter.search)
+                                        if (!isMatch)
+                                            continue;
+                                    }
+
+                                    arrayObj.deleteOne({
+                                        _id: document._id
+                                    }).then((result) => {
+                                        documents.push({ _id: document._id, storage: data.storageName, database, array })
+                                    }).catch((error) => {
+                                        errorHandler(data, error, database, array)
+                                        console.log(action, 'error', error);
+                                    });
+                                }
+
+                            }
+
+                            let _ids = [];
+                            for (let i = 0; i < data[type].length; i++) {
+                                if (data[type][i]._id) {
+                                    _ids.push(ObjectId(data[type][i]._id))
+                                    documents.push({ _id: data[type][i]._id, storage: data.storageName, database, array })
+                                }
+                            }
+
                             if (_ids.length == 1)
-                                query['_id'] = ObjectId(_ids[0])
-                            else if (_ids.length > 0)
+                                query['_id'] = _ids[0]
+                            else if (_ids.length)
                                 query['_id'] = { $in: _ids }
+
                             arrayObj.deleteMany(query, function (error, result) {
                                 arraysLength -= 1
                                 if (!arraysLength)
@@ -560,7 +511,6 @@ function object(action, data) {
 
                             })
                         }
-
                     }
 
                 }
@@ -577,16 +527,21 @@ function object(action, data) {
 
 }
 
-function createUpdate(data, type) {
+function createUpdate(data, type, index) {
     let update = {}, projection = {};
-    if (data[type][0]) {
-        update['$set'] = data[type][0]
-        // update['$set']['organization_id'] = data['organization_id'];
+    if (data[type][index]) {
+        update['$set'] = data[type][index]
+        update['$set']['modified'] = { on: data.timeStamp, by: data.user_id || data.clientId }
+        update['$set']['organization_id'] = data.organization_id
+
         if (update['$set']['_id'])
             delete update['$set']['_id']
-        Object.keys(update['$set']).forEach(key => {
 
-            if (key.includes('[u]')) {
+        Object.keys(update['$set']).forEach(key => {
+            if (key.includes('$inc')) {
+                update['$inc'] = update['$set'][key]
+                delete update['$set'][key]
+            } else if (key.includes('[u]')) {
                 update['$addToSet'] = { [key.replace('[u]', '')]: update['$set'][key] }
                 delete update['$set'][key]
             } else if (key.includes('[]')) {
@@ -599,7 +554,7 @@ function createUpdate(data, type) {
                 delete update['$set'][key]
             }
             // { $push: { "skills": { $each: ["Sports", "Acting"] } } })
-            // { $addToSet: { "skills": "GST" } }) // adds "GST"to all arrays if not exist
+            // { $addToSet: { "skills": "GST" } }) // adds "GST"to all arrays if the item does not exist
             projection[key] = 1
         })
     }
@@ -645,42 +600,51 @@ function createData(data, array, type) {
     return data
 }
 
-function getFilters(data) {
-    let query = {}, sort = {}
-    let filter = {
-        query: [],
-        sort: [],
-        search: {
-            value: [],
-            type: "or"
-        },
-        index: 0,
-        ...data.filter
-    };
+async function getFilters(data, arrayObj) {
+    let query =
+        {}, sort = {}, index = 0, limit = 0, count
+    if (data.filter) {
 
-    query = createQuery(filter.query);
+        if (data.filter.query)
+            query = createQuery(data.filter.query);
 
 
-    if (filter.sort) {
-        for (let i = 0; i < filter.sort.length; i++) {
-            let direction = filter.sort[i].direction
-            if (direction == 'desc' || direction == -1)
-                direction = -1;
-            else
-                direction = 1;
+        if (data.filter.sort) {
+            for (let i = 0; i < data.filter.sort.length; i++) {
+                let direction = data.filter.sort[i].direction
+                if (direction == 'desc' || direction == -1)
+                    direction = -1;
+                else
+                    direction = 1;
 
-            sort[filter.sort[i].key] = filter.sort[i].direction
+                sort[data.filter.sort[i].key] = direction
+            }
         }
+
+        if (arrayObj) {
+            count = await arrayObj.estimatedDocumentCount()
+            data.filter.count = count
+        }
+
+        if (data.filter.index)
+            index = data.filter.index
+        if (data.filter.limit)
+            limit = data.filter.limit
+        if (limit)
+            limit = index + limit;
     }
-    return { query, sort }
+
+    if (data['organization_id'])
+        query['organization_id'] = { $eq: data['organization_id'] }
+
+    return { query, sort, index, limit, count }
 }
 
-// TODO: create impved mongodb query to cover many cases
-function createQuery(filters) {
+// TODO: improve mongodb query to cover many cases
+function createQuery(queries) {
     let query = new Object();
 
-
-    for (let item of filters) {
+    for (let item of queries) {
 
         if (!item.key)
             continue
