@@ -1,3 +1,11 @@
+# [1.8.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.7.2...v1.8.0) (2023-09-07)
+
+
+### Features
+
+* support $push, $delete, $pop, $pull methods on arrays. ([06bf984](https://github.com/CoCreate-app/CoCreate-mongodb/commit/06bf9844863885d2cf9c6cc9591500becb105f51))
+* Use cursor when filtering through documents, increasing performance and enabeling ability to process very large data sets ([376c63f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/376c63fa461221f71811032528d04c4b8235241e))
+
 ## [1.7.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.7.1...v1.7.2) (2023-08-21)
 
 
