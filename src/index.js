@@ -263,7 +263,7 @@ function object(action, data) {
                 for (let array of arrays) {
                     const db = client.db(database);
                     const arrayObj = db.collection(array);
-                    const doc = { $storage: data.storageName, $database: database, $array: array }
+                    const reference = { $storage: data.storageName, $database: database, $array: array }
 
                     if (data[type] && !Array.isArray(data[type]))
                         data[type] = [data[type]]
@@ -285,7 +285,7 @@ function object(action, data) {
                     for (let i = 0; i < data[type].length; i++) {
                         if (action !== 'createObject' && data[type][i].$filter) {
                             isFilter = true
-                            doc['$filter'] = data[type][i].$filter
+                            reference['$filter'] = data[type][i].$filter
                             filter = await createFilter({ $filter: data[type][i].$filter }, arrayObj)
                         }
 
@@ -315,17 +315,17 @@ function object(action, data) {
 
                                 let result
                                 if (action === 'createObject') {
-                                    documents.push({ ...doc, _id: data[type][i]._id })
+                                    documents.push({ ...reference, ...data[type][i] })
                                 } else if (action === 'readObject') {
                                     result = await arrayObj.findOne(query, projection);
                                     result._id = result._id.toString()
-                                    documents.push({ ...doc, ...result })
+                                    documents.push({ ...reference, ...result })
                                 } else if (action === 'updateObject') {
                                     result = await arrayObj.updateOne(query, update, options);
-                                    documents.push({ ...doc, _id: query['_id'].toString() })
+                                    documents.push({ ...reference, ...data[type][[i]] })
                                 } else if (action === 'deleteObject') {
                                     result = await arrayObj.deleteOne(query);
-                                    documents.push({ ...doc, _id: data[type][i]._id })
+                                    documents.push({ ...reference, _id: data[type][i]._id })
                                 }
                                 dataTransferedIn += getBytes(result)
 
@@ -340,9 +340,15 @@ function object(action, data) {
                                 delete query._id
 
                                 dataTransferedOut += getBytes({ query, projection, sort, index, limit })
+                                let document = ''
+
                                 const cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit);
-                                while (await cursor.hasNext()) {
-                                    const document = await cursor.next();
+                                if (!(await cursor.hasNext()) && action === 'updateObject' && data.upsert)
+                                    document = { _id: ObjectId(data[type][i]._id) }
+                                while (await cursor.hasNext() || document) {
+                                    if (!document)
+                                        document = await cursor.next();
+
                                     dataTransferedIn += getBytes(document)
 
                                     if (data.$filter && data.$filter.search) {
@@ -351,10 +357,8 @@ function object(action, data) {
                                             continue;
                                     }
 
-                                    document._id = document._id.toString()
-
                                     if (action === 'readObject') {
-                                        documents.push({ ...doc, ...document })
+                                        documents.push({ ...reference, ...document, _id: document._id.toString() })
                                     } else {
                                         dataTransferedOut += getBytes({ _id: document._id, update, options })
 
@@ -366,8 +370,9 @@ function object(action, data) {
                                         }
 
                                         dataTransferedIn += getBytes(result)
-                                        documents.push({ ...doc, _id: document._id })
+                                        documents.push({ ...reference, ...data[type][i], _id: document._id.toString() })
                                     }
+                                    document = ''
                                 }
                             } catch (error) {
                                 errorHandler(data, error, database, array)
@@ -582,6 +587,13 @@ function createQuery(queries) {
                 else
                     query[key] = { $in: item.value }
                 break;
+            case '$or':
+                if (!query[item.operator])
+                    query[item.operator] = [{ [key]: item.value }];
+                else
+                    query[item.operator].push({ [key]: item.value })
+                delete query[key]
+                break;
             case '$geoWithin':
                 try {
                     let value = JSON.parse(item.value);
@@ -610,7 +622,7 @@ function createProjection(data) {
     let projection = {}
 
     Object.keys(data).forEach((key) => {
-        if (!['_id', 'organization_id'].includes(key))
+        if (!['_id', 'organization_id'].includes(key) && !key.startsWith('$'))
             projection[key.replace(/\[(\d+)\]/g, '.$1')] = 1
     });
 
