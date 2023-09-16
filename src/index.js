@@ -315,14 +315,16 @@ function object(action, data) {
 
                                 let result
                                 if (action === 'createObject') {
-                                    documents.push({ ...reference, ...data[type][i] })
+                                    let _id = data[type][i]._id.toString()
+                                    // TODO: type error occuring when pushing the item pushes but throws an error
+                                    documents.push({ ...data[type][i], ...reference, _id })
                                 } else if (action === 'readObject') {
                                     result = await arrayObj.findOne(query, projection);
                                     result._id = result._id.toString()
-                                    documents.push({ ...reference, ...result })
+                                    documents.push({ ...result, ...reference })
                                 } else if (action === 'updateObject') {
                                     result = await arrayObj.updateOne(query, update, options);
-                                    documents.push({ ...reference, ...data[type][[i]] })
+                                    documents.push({ ...data[type][i], ...reference })
                                 } else if (action === 'deleteObject') {
                                     result = await arrayObj.deleteOne(query);
                                     documents.push({ ...reference, _id: data[type][i]._id })
@@ -358,7 +360,7 @@ function object(action, data) {
                                     }
 
                                     if (action === 'readObject') {
-                                        documents.push({ ...reference, ...document, _id: document._id.toString() })
+                                        documents.push({ ...document, ...reference, _id: document._id.toString() })
                                     } else {
                                         dataTransferedOut += getBytes({ _id: document._id, update, options })
 
@@ -370,7 +372,7 @@ function object(action, data) {
                                         }
 
                                         dataTransferedIn += getBytes(result)
-                                        documents.push({ ...reference, ...data[type][i], _id: document._id.toString() })
+                                        documents.push({ ...data[type][i], ...reference, _id: document._id.toString() })
                                     }
                                     document = ''
                                 }
