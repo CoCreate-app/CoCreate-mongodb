@@ -1,3 +1,17 @@
+# [1.9.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.8.0...v1.9.0) (2023-09-17)
+
+
+### Bug Fixes
+
+* isFilter, cursor and upsert logic ([5bd0316](https://github.com/CoCreate-app/CoCreate-mongodb/commit/5bd0316b4849fbba70c90338308d75fa9640b933))
+* merge reference after data update references. convert ObjectId to string before pushing to documents ([b3ee3f8](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b3ee3f8e04efcf202db49b8820adafdd9bc647e0))
+
+
+### Features
+
+* createProjection function and refactor code to improve performance and readability ([c80ae1c](https://github.com/CoCreate-app/CoCreate-mongodb/commit/c80ae1c92e7f4fe40f64ebbc974496b34e83ba7e))
+* set replaceArray(object, true) to true returns projection ([4db10a9](https://github.com/CoCreate-app/CoCreate-mongodb/commit/4db10a91ff9ab69b9f36ba547997770087a5382a))
+
 # [1.8.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.7.2...v1.8.0) (2023-09-07)
 
 
