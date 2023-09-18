@@ -1,3 +1,11 @@
+## [1.9.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.9.0...v1.9.1) (2023-09-18)
+
+
+### Bug Fixes
+
+*  Add path and pathname ([7ae3b2d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/7ae3b2d7b57fdfbbfe26782ca260e5ad01b13cd0))
+* Update dCoCreate dpendencies to latest versions ([b583adc](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b583adc423db188577fe8e1fbac6304dabf8c86a))
+
 # [1.9.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.8.0...v1.9.0) (2023-09-17)
 
 
