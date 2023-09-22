@@ -367,6 +367,7 @@ function object(action, data) {
                                         let result
                                         if (action === 'updateObject') {
                                             result = await arrayObj.updateOne({ _id: document._id }, update, options);
+                                            // TODO: if update.$push or update.$each read document with projection to get index and update the keys [] to include index
                                         } else if (action === 'deleteObject') {
                                             result = await arrayObj.deleteOne({ _id: document._id });
                                         }
@@ -440,7 +441,7 @@ function createUpdate(update, options, data, isGlobal) {
         let originalKey = key
         key = key.replace(/\[(\d+)\]/g, '.$1');
 
-        let operators = ['$rename', '$inc', '$push', '$splice', '$unset', '$delete', '$slice', '$pop']
+        let operators = ['$rename', '$inc', '$push', '$each', '$splice', '$unset', '$delete', '$slice', '$pop', '$shift', '$addToSet', '$pull']
         if (!operators.includes(operator) && typeof index !== 'number') {
             if (!isGlobal)
                 update['$set'][key] = data[originalKey]
@@ -469,11 +470,11 @@ function createUpdate(update, options, data, isGlobal) {
         } else if (operator === '$addToSet' || operator === '$pull') {
             key = arrayKey
             updates[key] = data[originalKey]
-        } else if (operator === '$push' || typeof index === 'number') {
-            if (!Array.isArray(data[originalKey]))
-                updates[key] = [data[originalKey]]
-            else
+        } else if (operator === '$push' || operator === '$each' || typeof index === 'number') {
+            if (operator === '$each')
                 updates[key] = data[originalKey]
+            else
+                updates[key] = [data[originalKey]]
 
             let insert = { $each: updates[key] }
             if (typeof index === 'number' && index >= 0)
