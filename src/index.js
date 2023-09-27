@@ -1,5 +1,5 @@
 const { MongoClient, ObjectId } = require('mongodb');
-const { dotNotationToObject, queryData, searchData, sortData } = require('@cocreate/utils')
+const { dotNotationToObject, queryData, searchData, sortData, isValidDate } = require('@cocreate/utils')
 const clients = new Map()
 
 
@@ -248,8 +248,8 @@ function object(action, data) {
             if (data.request)
                 data[type] = data.request
 
-            if (!data['timeStamp'])
-                data['timeStamp'] = new Date().toISOString()
+            // if (!data['timeStamp'])
+            data['timeStamp'] = new Date(data['timeStamp'])
 
             let databases = data.database;
             if (!Array.isArray(databases))
@@ -307,15 +307,24 @@ function object(action, data) {
 
                         if (data[type][i]._id) {
                             try {
-                                if (action !== 'createObject') {
-                                    query._id = ObjectId(data[type][i]._id)
+                                query._id = new ObjectId(data[type][i]._id);
+                            } catch (error) {
+                                if (action === 'updateObject' && options.upsert) {
+                                    data[type][i]._id = ObjectId()
+                                    query._id = data[type][i]._id;
+                                } else {
+                                    errorHandler(data, error, database, array)
+                                    continue;
                                 }
+                            }
+
+                            try {
 
                                 dataTransferedOut += getBytes({ query, update, projection, options })
 
                                 let result
                                 if (action === 'createObject') {
-                                    let _id = data[type][i]._id.toString()
+                                    _id = data[type][i]._id.toString()
                                     // TODO: type error occuring when pushing the item pushes but throws an error
                                     documents.push({ ...data[type][i], ...reference, _id })
                                 } else if (action === 'readObject') {
@@ -324,6 +333,8 @@ function object(action, data) {
                                     documents.push({ ...result, ...reference })
                                 } else if (action === 'updateObject') {
                                     result = await arrayObj.updateOne(query, update, options);
+                                    // TODO: handle upsert false and id does not exist
+                                    data[type][i]._id = query._id.toString()
                                     documents.push({ ...data[type][i], ...reference })
                                 } else if (action === 'deleteObject') {
                                     result = await arrayObj.deleteOne(query);
@@ -374,12 +385,15 @@ function object(action, data) {
 
                                         dataTransferedIn += getBytes(result)
                                         documents.push({ ...data[type][i], ...reference, _id: document._id.toString() })
+                                        data[type].push({ ...data[type][i], ...reference, _id: document._id.toString() })
+
                                     }
                                     document = ''
                                 }
                             } catch (error) {
                                 errorHandler(data, error, database, array)
                             }
+
                         }
                     }
 
@@ -388,6 +402,10 @@ function object(action, data) {
                             dataTransferedOut += getBytes(data[type])
                             const result = await arrayObj.insertMany(data[type]);
                             dataTransferedIn += getBytes(result)
+
+                            for (let i = 0; i < data[type].length; i++) {
+                                data[type][i]._id = data[type][i]._id.toString()
+                            }
                         } catch (error) {
                             errorHandler(data, error, database, array)
                         }
@@ -419,6 +437,7 @@ function createUpdate(update, options, data, isGlobal) {
     Object.keys(data).forEach(key => {
         if (isGlobal && !key.startsWith('$') || key === '_id')
             return
+        data[key] = isValidDate(data[key])
 
         let operator
         if (key.endsWith(']')) {
@@ -502,7 +521,6 @@ async function createFilter(data, arrayObj) {
         if (data.$filter.query)
             query = createQuery(data.$filter.query);
 
-
         if (data.$filter.sort) {
             for (let i = 0; i < data.$filter.sort.length; i++) {
                 let direction = data.$filter.sort[i].direction
@@ -550,6 +568,8 @@ function createQuery(queries) {
             else
                 continue
         }
+
+        item.value = isValidDate(item.value)
 
         let key = item.key;
         if (!query[key]) {
