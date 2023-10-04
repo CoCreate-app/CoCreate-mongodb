@@ -248,8 +248,10 @@ function object(action, data) {
             if (data.request)
                 data[type] = data.request
 
-            // if (!data['timeStamp'])
-            data['timeStamp'] = new Date(data['timeStamp'])
+            if (!data['timeStamp'])
+                data['timeStamp'] = new Date()
+            else
+                data['timeStamp'] = new Date(data['timeStamp'])
 
             let databases = data.database;
             if (!Array.isArray(databases))
@@ -333,6 +335,7 @@ function object(action, data) {
                                     documents.push({ ...result, ...reference })
                                 } else if (action === 'updateObject') {
                                     result = await arrayObj.updateOne(query, update, options);
+
                                     // TODO: handle upsert false and id does not exist
                                     data[type][i]._id = query._id.toString()
                                     documents.push({ ...data[type][i], ...reference })
@@ -377,7 +380,19 @@ function object(action, data) {
 
                                         let result
                                         if (action === 'updateObject') {
-                                            result = await arrayObj.updateOne({ _id: document._id }, update, options);
+                                            if (options.returnNewDocument) {
+                                                let object = await arrayObj.findOneAndUpdate({ _id: document._id }, update, options);
+                                                for (let key of Object.keys(object)) {
+                                                    if (key === '_id')
+                                                        continue
+                                                    let newArrayKey = options.newArray[key]
+                                                    // TODO: get index based on $operator
+                                                    let index = object[key].length - 1
+                                                    if (index >= 0)
+                                                        data[type][i][newArrayKey.replace('[]', `[${index}]`)] = data[type][i][newArrayKey]
+                                                }
+                                            } else
+                                                result = await arrayObj.updateOne({ _id: document._id }, update, options);
                                             // TODO: if update.$push or update.$each read document with projection to get index and update the keys [] to include index
                                         } else if (action === 'deleteObject') {
                                             result = await arrayObj.deleteOne({ _id: document._id });
@@ -460,7 +475,20 @@ function createUpdate(update, options, data, isGlobal) {
         let originalKey = key
         key = key.replace(/\[(\d+)\]/g, '.$1');
 
-        let operators = ['$rename', '$inc', '$push', '$each', '$splice', '$unset', '$delete', '$slice', '$pop', '$shift', '$addToSet', '$pull']
+        if (originalKey.endsWith('[]')) {
+            if (!options.projection) {
+                options.projection = {}
+                options.arrayKey = {}
+                options.returnNewDocument = true
+            } else {
+                options.projection[key.replace(operator + '.', '')] = 1
+                options.arrayKey[key.replace(operator + '.', '')] = originalKey
+            }
+            if (!key.startsWith('$'))
+                operator = '$push'
+        }
+
+        let operators = ['$rename', '$inc', '$push', '$each', '$splice', '$unset', '$delete', '$slice', '$pop', '$shift', '$addToSet', '$pull', '$currentDate']
         if (!operators.includes(operator) && typeof index !== 'number') {
             if (!isGlobal)
                 update['$set'][key] = data[originalKey]
@@ -487,20 +515,20 @@ function createUpdate(update, options, data, isGlobal) {
             key = arrayKey
             updates[key] = index || 1
         } else if (operator === '$addToSet' || operator === '$pull') {
-            key = arrayKey
             updates[key] = data[originalKey]
         } else if (operator === '$push' || operator === '$each' || typeof index === 'number') {
-            if (operator === '$each')
-                updates[key] = data[originalKey]
-            else
-                updates[key] = [data[originalKey]]
+            updates[key] = data[originalKey]
+            if (typeof index === 'number' && index >= 0) {
+                if (operator === '$push')
+                    updates[key] = [data[originalKey]]
 
-            let insert = { $each: updates[key] }
-            if (typeof index === 'number' && index >= 0)
+                let insert = { $each: updates[key] }
                 insert.$postion = index
-
-            updates[key] = insert
+                updates[key] = insert
+            }
         } else if (operator === '$inc') {
+            updates[key] = data[originalKey]
+        } else if (operator === '$currentDate') {
             updates[key] = data[originalKey]
         }
 
@@ -510,7 +538,7 @@ function createUpdate(update, options, data, isGlobal) {
         if (key === operator)
             update[operator] = { ...update[operator], ...replaceArray(updates[key]) }
         else
-            update[operator][key.replace(operator, '')] = updates[key]
+            update[operator][key.replace(operator + '.', '')] = updates[key]
     })
 }
 
@@ -652,7 +680,7 @@ function createProjection(data) {
     return projection;
 }
 
-function replaceArray(data) {
+function replaceArray(data = {}) {
     let object = {}
 
     Object.keys(data).forEach((key) => {
