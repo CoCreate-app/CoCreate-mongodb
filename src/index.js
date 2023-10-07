@@ -267,19 +267,20 @@ function object(action, data) {
                     const arrayObj = db.collection(array);
                     const reference = { $storage: data.storageName, $database: database, $array: array }
 
+                    if (!data[type])
+                        data[type] = []
                     if (data[type] && !Array.isArray(data[type]))
                         data[type] = [data[type]]
 
                     let isFilter
-                    if (data.$filter && data.$filter.query)
+                    if (data.$filter)
                         isFilter = true
+                    if (isFilter && !data[type].length)
+                        data[type] = [{}]
 
                     let filter = await createFilter(data, arrayObj);
 
                     let projections = {}, projection = {}, update = {}, options = {}
-
-                    if (isFilter && (!data[type] || !data[type].length))
-                        data[type] = [{}]
 
                     if (action === 'updateObject')
                         createUpdate(update, options, data, true)
@@ -296,7 +297,6 @@ function object(action, data) {
                         if (action === 'createObject') {
                             data[type][i] = replaceArray(data[type][i])
                             data[type][i] = dotNotationToObject(data[type][i])
-                            data[type][i]._id = ObjectId(data[type][i]._id)
                             data[type][i]['organization_id'] = data['organization_id'];
                             data[type][i]['created'] = { on: data.timeStamp, by: data.user_id || data.clientId }
                         } else if (action === 'readObject') {
@@ -307,16 +307,18 @@ function object(action, data) {
                             createUpdate(update, options, data[type][i])
                         }
 
-                        if (data[type][i]._id) {
-                            try {
-                                query._id = new ObjectId(data[type][i]._id);
-                            } catch (error) {
-                                if (action === 'updateObject' && options.upsert) {
-                                    data[type][i]._id = ObjectId()
-                                    query._id = data[type][i]._id;
-                                } else {
-                                    errorHandler(data, error, database, array)
-                                    continue;
+                        if (data[type][i]._id || action === 'createObject') {
+                            if (action !== 'createObject') {
+                                try {
+                                    query._id = new ObjectId(data[type][i]._id);
+                                } catch (error) {
+                                    if (action === 'updateObject' && options.upsert) {
+                                        data[type][i]._id = ObjectId()
+                                        query._id = data[type][i]._id;
+                                    } else {
+                                        errorHandler(data, error, database, array)
+                                        continue;
+                                    }
                                 }
                             }
 
@@ -326,9 +328,17 @@ function object(action, data) {
 
                                 let result
                                 if (action === 'createObject') {
-                                    _id = data[type][i]._id.toString()
+                                    if (data[type][i]._id) {
+                                        try {
+                                            data[type][i]._id = new ObjectId(data[type][i]._id);
+                                        } catch (error) {
+                                            delete data[type][i]._id
+                                        }
+                                    }
+                                    result = await arrayObj.insertOne(data[type][i]);
                                     // TODO: type error occuring when pushing the item pushes but throws an error
-                                    documents.push({ ...data[type][i], ...reference, _id })
+                                    data[type][i]._id = result.insertedId.toString()
+                                    documents.push({ ...data[type][i], ...reference })
                                 } else if (action === 'readObject') {
                                     result = await arrayObj.findOne(query, projection);
                                     result._id = result._id.toString()
@@ -361,6 +371,7 @@ function object(action, data) {
                                 const cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit);
                                 if (!(await cursor.hasNext()) && action === 'updateObject' && data.upsert)
                                     document = { _id: ObjectId(data[type][i]._id) }
+
                                 while (await cursor.hasNext() || document) {
                                     if (!document)
                                         document = await cursor.next();
@@ -412,19 +423,19 @@ function object(action, data) {
                         }
                     }
 
-                    if (action === 'createObject') {
-                        try {
-                            dataTransferedOut += getBytes(data[type])
-                            const result = await arrayObj.insertMany(data[type]);
-                            dataTransferedIn += getBytes(result)
+                    // if (action === 'createObject') {
+                    //     try {
+                    //         dataTransferedOut += getBytes(data[type])
+                    //         const result = await arrayObj.insertMany(data[type]);
+                    //         dataTransferedIn += getBytes(result)
 
-                            for (let i = 0; i < data[type].length; i++) {
-                                data[type][i]._id = data[type][i]._id.toString()
-                            }
-                        } catch (error) {
-                            errorHandler(data, error, database, array)
-                        }
-                    }
+                    //         for (let i = 0; i < data[type].length; i++) {
+                    //             data[type][i]._id = data[type][i]._id.toString()
+                    //         }
+                    //     } catch (error) {
+                    //         errorHandler(data, error, database, array)
+                    //     }
+                    // }
 
                 }
             }
@@ -592,7 +603,11 @@ function createQuery(queries) {
 
         if (item.key == "_id") {
             if (item.value)
-                item.value = ObjectId(item.value)
+                try {
+                    item.value = ObjectId(item.value)
+                } catch (error) {
+                    continue
+                }
             else
                 continue
         }
