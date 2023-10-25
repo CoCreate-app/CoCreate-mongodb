@@ -1,3 +1,10 @@
+## [1.10.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.5...v1.10.6) (2023-10-25)
+
+
+### Bug Fixes
+
+* ensure a single connection is created ([f3856af](https://github.com/CoCreate-app/CoCreate-mongodb/commit/f3856afb83b59c314f73c11654f8aceaf4891bc7))
+
 ## [1.10.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.4...v1.10.5) (2023-10-25)
 
 
