@@ -8,10 +8,12 @@ async function dbClient(data) {
         let client = clients.get(data.storageUrl)
         if (!client) {
             try {
-                client = MongoClient.connect(data.storageUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+                clients.set(data.storageUrl, client)
+                client = await MongoClient.connect(data.storageUrl, { useNewUrlParser: true, useUnifiedTopology: true });
                 clients.set(data.storageUrl, client)
             } catch (error) {
-                console.error(error)
+                console.error(`${data.organization_id}: storageName ${data.storageName} failed to connect to mongodb`)
+                errorHandler(data, error)
                 return { status: false }
             }
         }
@@ -41,7 +43,8 @@ function database(action, data) {
 
         try {
             const client = await dbClient(data)
-            if (!client) return
+            if (!client.status)
+                return data
             if (action == 'readDatabase') {
                 const db = client.db().admin();
                 // TODO: support if a database name is defined then return the database details and stats
@@ -94,7 +97,8 @@ function array(action, data) {
 
         try {
             const client = await dbClient(data)
-            if (!client) return
+            if (!client.status)
+                return data
 
             if (data.request)
                 data.array = data.request
@@ -239,7 +243,9 @@ function object(action, data) {
     return new Promise(async (resolve, reject) => {
         try {
             const client = await dbClient(data)
-            if (!client) return
+            if (!client.status)
+                return data
+
             let dataTransferedIn = 0
             let dataTransferedOut = 0
             let type = 'object'
@@ -286,6 +292,10 @@ function object(action, data) {
                         createUpdate(update, options, data, true)
 
                     for (let i = 0; i < data[type].length; i++) {
+                        delete data[type][i].$storage
+                        delete data[type][i].$database
+                        delete data[type][i].$array
+
                         if (action !== 'createObject' && data[type][i].$filter) {
                             isFilter = true
                             reference['$filter'] = data[type][i].$filter
