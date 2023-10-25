@@ -6,12 +6,12 @@ const clients = new Map()
 async function dbClient(data) {
     if (data.storageUrl) {
         let client = clients.get(data.storageUrl)
-        if (!client) {
+        if (!client && !clients.has(data.storageUrl)) {
             try {
                 clients.set(data.storageUrl, client)
                 client = await MongoClient.connect(data.storageUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+                clients.set(data.storageUrl, client)
             } catch (error) {
-                clients.delete(data.storageUrl)
                 console.error(`${data.organization_id}: storageName ${data.storageName} failed to connect to mongodb`)
                 errorHandler(data, error)
                 return { status: false }
@@ -43,7 +43,7 @@ function database(action, data) {
 
         try {
             const client = await dbClient(data)
-            if (client.status === false)
+            if (!client || client.status === false)
                 return data
             if (action == 'readDatabase') {
                 const db = client.db().admin();
@@ -97,7 +97,7 @@ function array(action, data) {
 
         try {
             const client = await dbClient(data)
-            if (client.status === false)
+            if (!client || client.status === false)
                 return data
 
             if (data.request)
@@ -243,7 +243,7 @@ function object(action, data) {
     return new Promise(async (resolve, reject) => {
         try {
             const client = await dbClient(data)
-            if (client.status === false)
+            if (!client || client.status === false)
                 return data
 
             let dataTransferedIn = 0
