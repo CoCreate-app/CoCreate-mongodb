@@ -1,3 +1,10 @@
+## [1.10.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.3...v1.10.4) (2023-10-25)
+
+
+### Bug Fixes
+
+* dbClient error handling ([256e9b9](https://github.com/CoCreate-app/CoCreate-mongodb/commit/256e9b975a26c6eea16174d99335bf66066a5f36))
+
 ## [1.10.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.2...v1.10.3) (2023-10-25)
 
 
