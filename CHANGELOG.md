@@ -1,3 +1,10 @@
+## [1.10.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.4...v1.10.5) (2023-10-25)
+
+
+### Bug Fixes
+
+* delete mongoClient if an error occures ([b1942c7](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b1942c7a6932c4552c14af11462f67debce9fc9c))
+
 ## [1.10.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.3...v1.10.4) (2023-10-25)
 
 
