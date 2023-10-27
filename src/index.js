@@ -1,24 +1,27 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const { dotNotationToObject, queryData, searchData, sortData, isValidDate } = require('@cocreate/utils')
 const clients = new Map()
-
+const organizations = {}
 
 async function dbClient(data) {
     if (data.storageUrl) {
-        let client = clients.get(data.storageUrl)
-        if (!client && !clients.has(data.storageUrl)) {
-            try {
-                clients.set(data.storageUrl, client)
-                client = await MongoClient.connect(data.storageUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-                clients.set(data.storageUrl, client)
-            } catch (error) {
-                console.error(`${data.organization_id}: storageName ${data.storageName} failed to connect to mongodb`)
-                errorHandler(data, error)
-                return { status: false }
-            }
+        if (!organizations[data.organization_id])
+            organizations[data.organization_id] = {}
+        try {
+            if (!organizations[data.organization_id][data.storageUrl])
+                organizations[data.organization_id][data.storageUrl] = MongoClient.connect(data.storageUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+
+            organizations[data.organization_id][data.storageUrl] = await organizations[data.organization_id][data.storageUrl]
+            return organizations[data.organization_id][data.storageUrl]
+
+        } catch (error) {
+            console.error(`${data.organization_id}: storageName ${data.storageName} failed to connect to mongodb`)
+            errorHandler(data, error)
+            return { status: false }
         }
-        return client
     }
+
+    errorHandler(data, 'missing StorageUrl')
     return
 }
 
@@ -243,6 +246,7 @@ function object(action, data) {
     return new Promise(async (resolve, reject) => {
         try {
             const client = await dbClient(data)
+
             if (!client || client.status === false)
                 return data
 
@@ -352,7 +356,19 @@ function object(action, data) {
                                 } else if (action === 'readObject') {
                                     result = await arrayObj.findOne(query, projection);
                                     result._id = result._id.toString()
-                                    documents.push({ ...result, ...reference })
+
+                                    if (data[type][i].$storage && data[type][i].modified && data[type][i].modified.on) {
+                                        if (!result) {
+                                            result = await arrayObj.insertOne(data[type][i]);
+                                            data[type][i]._id = result.insertedId.toString()
+                                        } else if (result && new Date(data[type][i].modified.on) > new Date(result.modified.on)) {
+                                            data[type][i] = { ...result, ...data[type][i] }
+                                            createUpdate(update, options, data[type][i])
+                                            result = await arrayObj.updateOne(query, update, options);
+                                        } else
+                                            documents.push({ ...result, ...reference })
+                                    } else
+                                        documents.push({ ...result, ...reference })
                                 } else if (action === 'updateObject') {
                                     result = await arrayObj.updateOne(query, update, options);
 
@@ -395,7 +411,22 @@ function object(action, data) {
                                     }
 
                                     if (action === 'readObject') {
-                                        documents.push({ ...document, ...reference, _id: document._id.toString() })
+                                        document._id = document._id.toString()
+                                        let object = data[type].find(obj => obj._id && obj._id.toString() === document._id.toString())
+                                        if (object) {
+                                            if (object.$storage && object.modified && object.modified.on) {
+                                                if (document && new Date(object.modified.on) > new Date(document.modified.on)) {
+                                                    object = { ...document, ...object }
+                                                    createUpdate(update, options, object)
+                                                    document = await arrayObj.updateOne(query, update, options);
+                                                    dataTransferedIn += getBytes(document)
+                                                } else
+                                                    documents.push({ ...document, ...reference })
+                                            } else
+                                                documents.push({ ...document, ...reference })
+
+                                        } else
+                                            documents.push({ ...document, ...reference })
                                     } else {
                                         dataTransferedOut += getBytes({ _id: document._id, update, options })
 
@@ -449,7 +480,6 @@ function object(action, data) {
 
                 }
             }
-
             data = createData(data, documents, type, dataTransferedIn, dataTransferedOut)
             resolve(data)
 
