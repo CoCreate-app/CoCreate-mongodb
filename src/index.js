@@ -255,8 +255,8 @@ function object(action, data) {
             let type = 'object'
             let documents = [];
 
-            if (data.request)
-                data[type] = data.request
+            // if (data.request)
+            //     data[type] = data.request
 
             if (!data['timeStamp'])
                 data['timeStamp'] = new Date()
@@ -285,8 +285,8 @@ function object(action, data) {
                     let isFilter
                     if (data.$filter)
                         isFilter = true
-                    if (isFilter && !data[type].length)
-                        data[type] = [{}]
+                    if ((isFilter && !data[type].length) || data.isFilter)
+                        data[type].splice(0, 0, { isFilter: 'isEmptyObjectFilter' });
 
                     let filter = await createFilter(data, arrayObj);
 
@@ -352,7 +352,7 @@ function object(action, data) {
                                     result = await arrayObj.insertOne(data[type][i]);
                                     // TODO: type error occuring when pushing the item pushes but throws an error
                                     data[type][i]._id = result.insertedId.toString()
-                                    documents.push({ ...data[type][i], ...reference })
+                                    // documents.push({ ...data[type][i], ...reference })
                                 } else if (action === 'readObject') {
                                     result = await arrayObj.findOne(query, projection);
                                     result._id = result._id.toString()
@@ -366,19 +366,24 @@ function object(action, data) {
                                             createUpdate(update, options, data[type][i])
                                             result = await arrayObj.updateOne(query, update, options);
                                         } else
-                                            documents.push({ ...result, ...reference })
+                                            data[type][i] = { ...data[type][i], ...result }
                                     } else
-                                        documents.push({ ...result, ...reference })
+                                        data[type][i] = { ...data[type][i], ...result }
                                 } else if (action === 'updateObject') {
                                     result = await arrayObj.updateOne(query, update, options);
 
                                     // TODO: handle upsert false and id does not exist
                                     data[type][i]._id = query._id.toString()
-                                    documents.push({ ...data[type][i], ...reference })
+                                    // documents.push({ ...data[type][i], ...reference })
                                 } else if (action === 'deleteObject') {
                                     result = await arrayObj.deleteOne(query);
-                                    documents.push({ ...reference, _id: data[type][i]._id })
+                                    // documents.push({ ...reference, _id: data[type][i]._id })
                                 }
+
+                                data[type][i].$storage = 'mongodb'
+                                data[type][i].$database = database
+                                data[type][i].$array = array
+
                                 dataTransferedIn += getBytes(result)
 
                             } catch (error) {
@@ -452,7 +457,7 @@ function object(action, data) {
 
                                         dataTransferedIn += getBytes(result)
                                         documents.push({ ...data[type][i], ...reference, _id: document._id.toString() })
-                                        data[type].push({ ...data[type][i], ...reference, _id: document._id.toString() })
+                                        // data[type].push({ ...data[type][i], ...reference, _id: document._id.toString() })
 
                                     }
                                     document = ''
@@ -762,16 +767,26 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
         });
     }
 
-    if (!data.request)
-        data.request = data[type] || {}
-
-    data[type] = array
-
-    if (data.returnLog) {
-        if (!data.log)
-            data.log = []
-        data.log.push(...data[type])
+    if (data[type] && data[type][0] && data[type][0].isFilter === 'isEmptyObjectFilter') {
+        data[type].shift()
+        data.isFilter = true
     }
+
+    data[type].push(...array)
+
+    // if (data.$filter && data.$filter.sort)
+    //     data[type] = sortData(data[type], data.$filter.sort)
+
+    // if (!data.request)
+    //     data.request = data[type] || {}
+
+    // data[type] = array
+
+    // if (data.returnLog) {
+    //     if (!data.log)
+    //         data.log = []
+    //     data.log.push(...data[type])
+    // }
 
     return data
 }
