@@ -26,7 +26,7 @@ async function dbClient(data) {
 }
 
 function send(data) {
-    let [method, type] = data.method.split('.')
+    let [type, method] = data.method.split('.')
     // let action = data.method.replace(/\.([a-z])/g, (_, match) => match.toUpperCase());
 
     if (type === 'database')
