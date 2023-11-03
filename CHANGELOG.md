@@ -1,3 +1,18 @@
+# [1.11.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.6...v1.11.0) (2023-11-03)
+
+
+### Bug Fixes
+
+* favicon.ico path ([5e54a37](https://github.com/CoCreate-app/CoCreate-mongodb/commit/5e54a371dcbebc7364d401570c3f0cbeb3f0db31))
+* update dependencies to the lates versions ([2a4dc62](https://github.com/CoCreate-app/CoCreate-mongodb/commit/2a4dc6263067c3c1cc4571d623aa8530a83708d1))
+* update method to use object.update etc ([1e9e7b8](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1e9e7b8e81d7512ec546cdbcbc381851477f8271))
+
+
+### Features
+
+* morph data[type] so the object can be synced across multiple storage, database, arra ([8d29c0a](https://github.com/CoCreate-app/CoCreate-mongodb/commit/8d29c0a7cc160654e04e0e6266f82906e772f57f))
+* read.object will compare modified.on and update db ([b8b2c74](https://github.com/CoCreate-app/CoCreate-mongodb/commit/b8b2c74e2abbf568eda14c1328961781395d7c5c))
+
 ## [1.10.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.5...v1.10.6) (2023-10-25)
 
 
