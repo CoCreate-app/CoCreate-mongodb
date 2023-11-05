@@ -786,6 +786,17 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
     //     data.log.push(...data[type])
     // }
 
+    let key = '_id'
+    if (type !== 'object')
+        key = 'name'
+    for (let i = 0; i < array.length; i++) {
+        const matchIndex = data[type].findIndex((item) => item[key] === array[i][key]);
+        if (matchIndex !== -1) {
+            data[type][matchIndex] = { ...data[type][matchIndex], ...array[i] };
+        } else
+            data[type].push(array[i])
+    }
+
     return data
 }
 
