@@ -289,6 +289,13 @@ function object(method, data) {
                         createUpdate(update, options, data, true)
 
                     for (let i = 0; i < data[type].length; i++) {
+                        let $storage = data[type][i].$storage || []
+                        let $database = data[type][i].$database || []
+                        let $array = data[type][i].$array || []
+                        $storage.push(data.storageName)
+                        $database.push(database)
+                        $array.push(array)
+
                         delete data[type][i].$storage
                         delete data[type][i].$database
                         delete data[type][i].$array
@@ -377,9 +384,9 @@ function object(method, data) {
                                     // documents.push({ ...reference, _id: data[type][i]._id })
                                 }
 
-                                data[type][i].$storage = 'mongodb'
-                                data[type][i].$database = database
-                                data[type][i].$array = array
+                                data[type][i].$storage = $storage
+                                data[type][i].$database = $database
+                                data[type][i].$array = $array
 
                                 dataTransferedIn += getBytes(result)
 
@@ -779,6 +786,14 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
     for (let i = 0; i < array.length; i++) {
         const matchIndex = data[type].findIndex((item) => item[key] === array[i][key]);
         if (matchIndex !== -1) {
+            data[type][matchIndex].$storage.push(array[i].$storage)
+            delete array[i].$storage
+            data[type][matchIndex].$database.push(array[i].$database)
+            delete array[i].$database
+            data[type][matchIndex].$array.push(array[i].$array)
+            delete array[i].$array
+
+            // TODO: compare dates and merge and and updates to keep all synced and up to date
             data[type][matchIndex] = { ...data[type][matchIndex], ...array[i] };
         } else
             data[type].push(array[i])
