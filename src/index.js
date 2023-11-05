@@ -27,17 +27,15 @@ async function dbClient(data) {
 
 function send(data) {
     let [type, method] = data.method.split('.')
-    // let action = data.method.replace(/\.([a-z])/g, (_, match) => match.toUpperCase());
-
     if (type === 'database')
-        return database(method + type.charAt(0).toUpperCase() + type.slice(1), data)
+        return database(method, data)
     if (type === 'array')
-        return array(method + type.charAt(0).toUpperCase() + type.slice(1), data)
+        return array(method, data)
     if (type === 'object')
-        return object(method + type.charAt(0).toUpperCase() + type.slice(1), data)
+        return object(method, data)
 }
 
-function database(action, data) {
+function database(method, data) {
     return new Promise(async (resolve, reject) => {
         let type = 'database'
         let databaseArray = []
@@ -48,7 +46,7 @@ function database(action, data) {
             const client = await dbClient(data)
             if (!client || client.status === false)
                 return data
-            if (action == 'readDatabase') {
+            if (method == 'read') {
                 const db = client.db().admin();
                 // TODO: support if a database name is defined then return the database details and stats
                 // else apply filter and return dbs for which each should have stats and details
@@ -73,7 +71,7 @@ function database(action, data) {
                     resolve(createData(data, databaseArray, type))
                 })
             }
-            if (action == 'deleteDatabase') {
+            if (method == 'delete') {
                 const db = client.db(data.database);
                 db.dropDatabase().then(restult => {
                     dataTransferedIn += getBytes(restult)
@@ -82,7 +80,7 @@ function database(action, data) {
             }
         } catch (error) {
             errorHandler(data, error)
-            console.log(action, 'error', error);
+            console.log(method, 'error', error);
             resolve(data);
         }
 
@@ -91,7 +89,7 @@ function database(action, data) {
     });
 }
 
-function array(action, data) {
+function array(method, data) {
     return new Promise(async (resolve, reject) => {
         let type = 'array'
         let arrayArray = [];
@@ -114,7 +112,7 @@ function array(action, data) {
             for (let database of databases) {
                 const db = client.db(database);
 
-                if (action == 'readCollection') {
+                if (method == 'read') {
 
                     let { query, sort } = await createFilter(data);
 
@@ -144,7 +142,7 @@ function array(action, data) {
                 } else {
                     let arrays
                     let value
-                    if (action == 'updateCollection')
+                    if (method == 'update')
                         arrays = Object.entries(data.array)
                     else
                         arrays = data.array;
@@ -155,7 +153,7 @@ function array(action, data) {
                     let arraysLength = arrays.length
                     for (let array of arrays) {
 
-                        if (action == 'createCollection') {
+                        if (method == 'create') {
                             dataTransferedOut += getBytes(array)
                             db.createCollection(array, function (error, result) {
                                 if (error)
@@ -176,13 +174,13 @@ function array(action, data) {
                                 }
                             })
                         } else {
-                            if (action == 'updateCollection') {
+                            if (method == 'update') {
                                 [array, value] = array
                             }
 
                             const arrayObj = db.collection(array);
 
-                            if (action == 'updateCollection') {
+                            if (method == 'update') {
                                 dataTransferedOut += getBytes(result)
                                 arrayObj.rename(value, function (error, result) {
                                     if (error)
@@ -204,7 +202,7 @@ function array(action, data) {
                                 })
                             }
 
-                            if (action == 'deleteCollection') {
+                            if (method == 'delete') {
                                 arrayObj.drop(function (error, result) {
                                     if (error)
                                         errorHandler(data, error, database, array)
@@ -234,7 +232,7 @@ function array(action, data) {
 
         } catch (error) {
             errorHandler(data, error)
-            console.log(action, 'error', error);
+            console.log(method, 'error', error);
             resolve(data);
         }
     }, (error) => {
@@ -242,7 +240,7 @@ function array(action, data) {
     });
 }
 
-function object(action, data) {
+function object(method, data) {
     return new Promise(async (resolve, reject) => {
         try {
             const client = await dbClient(data)
@@ -287,7 +285,7 @@ function object(action, data) {
 
                     let projections = {}, projection = {}, update = {}, options = {}
 
-                    if (action === 'updateObject')
+                    if (method === 'update')
                         createUpdate(update, options, data, true)
 
                     for (let i = 0; i < data[type].length; i++) {
@@ -295,7 +293,7 @@ function object(action, data) {
                         delete data[type][i].$database
                         delete data[type][i].$array
 
-                        if (action !== 'createObject' && data[type][i].$filter) {
+                        if (method !== 'create' && data[type][i].$filter) {
                             isFilter = true
                             reference['$filter'] = data[type][i].$filter
                             filter = await createFilter({ $filter: data[type][i].$filter }, arrayObj)
@@ -303,14 +301,14 @@ function object(action, data) {
 
                         let { query, sort, index, limit } = filter
 
-                        if (action === 'createObject') {
+                        if (method === 'create') {
                             data[type][i] = replaceArray(data[type][i])
                             data[type][i] = dotNotationToObject(data[type][i])
                             data[type][i]['organization_id'] = data['organization_id'];
                             data[type][i]['created'] = { on: new Date(data.timeStamp), by: data.user_id || data.clientId }
-                        } else if (action === 'readObject') {
+                        } else if (method === 'read') {
                             projection = createProjection(data[type][i])
-                        } else if (action === 'updateObject') {
+                        } else if (method === 'update') {
                             if (!data[type][i].modified)
                                 data[type][i].modified = { on: new Date(data.timeStamp), by: data.user_id || data.clientId }
                             else
@@ -320,12 +318,12 @@ function object(action, data) {
                             createUpdate(update, options, data[type][i])
                         }
 
-                        if (data[type][i]._id || action === 'createObject') {
-                            if (action !== 'createObject') {
+                        if (data[type][i]._id || method === 'create') {
+                            if (method !== 'create') {
                                 try {
                                     query._id = new ObjectId(data[type][i]._id);
                                 } catch (error) {
-                                    if (action === 'updateObject' && options.upsert) {
+                                    if (method === 'update' && options.upsert) {
                                         data[type][i]._id = ObjectId()
                                         query._id = data[type][i]._id;
                                     } else {
@@ -340,7 +338,7 @@ function object(action, data) {
                                 dataTransferedOut += getBytes({ query, update, projection, options })
 
                                 let result
-                                if (action === 'createObject') {
+                                if (method === 'create') {
                                     if (data[type][i]._id) {
                                         try {
                                             data[type][i]._id = new ObjectId(data[type][i]._id);
@@ -352,7 +350,7 @@ function object(action, data) {
                                     // TODO: type error occuring when pushing the item pushes but throws an error
                                     data[type][i]._id = result.insertedId.toString()
                                     // documents.push({ ...data[type][i], ...reference })
-                                } else if (action === 'readObject') {
+                                } else if (method === 'read') {
                                     result = await arrayObj.findOne(query, projection);
                                     result._id = result._id.toString()
 
@@ -368,13 +366,13 @@ function object(action, data) {
                                             data[type][i] = { ...data[type][i], ...result }
                                     } else
                                         data[type][i] = { ...data[type][i], ...result }
-                                } else if (action === 'updateObject') {
+                                } else if (method === 'update') {
                                     result = await arrayObj.updateOne(query, update, options);
 
                                     // TODO: handle upsert false and id does not exist
                                     data[type][i]._id = query._id.toString()
                                     // documents.push({ ...data[type][i], ...reference })
-                                } else if (action === 'deleteObject') {
+                                } else if (method === 'delete') {
                                     result = await arrayObj.deleteOne(query);
                                     // documents.push({ ...reference, _id: data[type][i]._id })
                                 }
@@ -390,14 +388,14 @@ function object(action, data) {
                             }
                         } else if (isFilter) {
                             try {
-                                if (action === 'readObject')
+                                if (method === 'read')
                                     projection = { ...projections, ...projection }
 
                                 dataTransferedOut += getBytes({ query, projection, sort, index, limit })
 
                                 let document = ''
                                 const cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit);
-                                if (!(await cursor.hasNext()) && action === 'updateObject' && data.upsert)
+                                if (!(await cursor.hasNext()) && method === 'update' && data.upsert)
                                     document = { _id: ObjectId(data[type][i]._id) }
 
                                 while (await cursor.hasNext() || document) {
@@ -412,7 +410,7 @@ function object(action, data) {
                                             continue;
                                     }
 
-                                    if (action === 'readObject') {
+                                    if (method === 'read') {
                                         document._id = document._id.toString()
                                         let object = data[type].find(obj => obj._id && obj._id.toString() === document._id.toString())
                                         if (object) {
@@ -433,7 +431,7 @@ function object(action, data) {
                                         dataTransferedOut += getBytes({ _id: document._id, update, options })
 
                                         let result
-                                        if (action === 'updateObject') {
+                                        if (method === 'update') {
                                             if (options.returnNewDocument) {
                                                 let object = await arrayObj.findOneAndUpdate({ _id: document._id }, update, options);
                                                 for (let key of Object.keys(object)) {
@@ -448,7 +446,7 @@ function object(action, data) {
                                             } else
                                                 result = await arrayObj.updateOne({ _id: document._id }, update, options);
                                             // TODO: if update.$push or update.$each read document with projection to get index and update the keys [] to include index
-                                        } else if (action === 'deleteObject') {
+                                        } else if (method === 'delete') {
                                             result = await arrayObj.deleteOne({ _id: document._id });
                                         }
 
@@ -466,7 +464,7 @@ function object(action, data) {
                         }
                     }
 
-                    // if (action === 'createObject') {
+                    // if (method === 'create') {
                     //     try {
                     //         dataTransferedOut += getBytes(data[type])
                     //         const result = await arrayObj.insertMany(data[type]);
@@ -487,7 +485,7 @@ function object(action, data) {
 
         } catch (error) {
             errorHandler(data, error)
-            console.log(action, 'error', error);
+            console.log(method, 'error', error);
             resolve(data);
         }
     }, (error) => {
@@ -772,19 +770,8 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
         data.isFilter = true
     }
 
-    // if (data.$filter && data.$filter.sort)
-    //     data[type] = sortData(data[type], data.$filter.sort)
-
     // if (!data.request)
     //     data.request = data[type] || {}
-
-    // data[type] = array
-
-    // if (data.returnLog) {
-    //     if (!data.log)
-    //         data.log = []
-    //     data.log.push(...data[type])
-    // }
 
     let key = '_id'
     if (type !== 'object')
