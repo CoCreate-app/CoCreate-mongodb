@@ -255,13 +255,8 @@ function object(action, data) {
             let type = 'object'
             let documents = [];
 
-            // if (data.request)
-            //     data[type] = data.request
-
             if (!data['timeStamp'])
-                data['timeStamp'] = new Date()
-            else
-                data['timeStamp'] = new Date(data['timeStamp'])
+                data['timeStamp'] = new Date().toISOString();
 
             let databases = data.database;
             if (!Array.isArray(databases))
@@ -312,11 +307,15 @@ function object(action, data) {
                             data[type][i] = replaceArray(data[type][i])
                             data[type][i] = dotNotationToObject(data[type][i])
                             data[type][i]['organization_id'] = data['organization_id'];
-                            data[type][i]['created'] = { on: data.timeStamp, by: data.user_id || data.clientId }
+                            data[type][i]['created'] = { on: new Date(data.timeStamp), by: data.user_id || data.clientId }
                         } else if (action === 'readObject') {
                             projection = createProjection(data[type][i])
                         } else if (action === 'updateObject') {
-                            data[type][i].modified = { on: data.timeStamp, by: data.user_id || data.clientId }
+                            if (!data[type][i].modified)
+                                data[type][i].modified = { on: new Date(data.timeStamp), by: data.user_id || data.clientId }
+                            else
+                                data[type][i].modified.on = new Date(data[type][i].modified.on)
+
                             data[type][i].organization_id = data.organization_id
                             createUpdate(update, options, data[type][i])
                         }
@@ -394,11 +393,9 @@ function object(action, data) {
                                 if (action === 'readObject')
                                     projection = { ...projections, ...projection }
 
-                                delete query._id
-
                                 dataTransferedOut += getBytes({ query, projection, sort, index, limit })
-                                let document = ''
 
+                                let document = ''
                                 const cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit);
                                 if (!(await cursor.hasNext()) && action === 'updateObject' && data.upsert)
                                     document = { _id: ObjectId(data[type][i]._id) }
@@ -508,7 +505,9 @@ function createUpdate(update, options, data, isGlobal) {
     Object.keys(data).forEach(key => {
         if (isGlobal && !key.startsWith('$') || key === '_id')
             return
-        data[key] = isValidDate(data[key])
+
+        if (isValidDate(data[key]))
+            data[key] = new Date(data[key])
 
         let operator
         if (key.endsWith(']')) {
@@ -657,7 +656,8 @@ function createQuery(queries) {
                 continue
         }
 
-        item.value = isValidDate(item.value)
+        if (isValidDate(item.value))
+            item.value = new Date(item.value)
 
         let key = item.key;
         if (!query[key]) {
@@ -771,8 +771,6 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
         data[type].shift()
         data.isFilter = true
     }
-
-    data[type].push(...array)
 
     // if (data.$filter && data.$filter.sort)
     //     data[type] = sortData(data[type], data.$filter.sort)
