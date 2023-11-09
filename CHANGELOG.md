@@ -1,3 +1,18 @@
+# [1.12.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.11.0...v1.12.0) (2023-11-09)
+
+
+### Bug Fixes
+
+* $storage, $database, $array are arrays ([9cda13a](https://github.com/CoCreate-app/CoCreate-mongodb/commit/9cda13ad88eff2639da6b1c5a60dc901a54d0518))
+* meta name typo ([c7c8e1d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/c7c8e1d7182f5992a5a1567e2ff7edf678cefbde))
+* update date queries ([3f8103d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/3f8103db89f0037f566e930928742a20825e24cd))
+* update method names ([936254d](https://github.com/CoCreate-app/CoCreate-mongodb/commit/936254d850536e55daaaf2d7862930a3068e8aee))
+
+
+### Features
+
+* merge data[types] with same _id for type objects and name for all other types ([1da51a8](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1da51a8c0600ecbe84af41fcc5c77f1949d36c60))
+
 # [1.11.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.10.6...v1.11.0) (2023-11-03)
 
 
