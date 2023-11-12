@@ -630,8 +630,6 @@ async function createFilter(data, arrayObj) {
             index = data.$filter.index
         if (data.$filter.limit)
             limit = data.$filter.limit
-        if (limit)
-            limit = index + limit;
     }
 
     if (data['organization_id'])
