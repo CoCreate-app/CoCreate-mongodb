@@ -1,3 +1,11 @@
+## [1.12.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.12.0...v1.12.1) (2023-11-12)
+
+
+### Bug Fixes
+
+* bump dependencies for latest features ([704750a](https://github.com/CoCreate-app/CoCreate-mongodb/commit/704750af769d95e78535221ed9bf92a2aa20b1fd))
+* removed limit = index + limit ([c085917](https://github.com/CoCreate-app/CoCreate-mongodb/commit/c085917d06c6017298b6c09f974015b22341a404))
+
 # [1.12.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.11.0...v1.12.0) (2023-11-09)
 
 
