@@ -697,9 +697,9 @@ function createQuery(queries) {
             case '$in':
             case '$nin':
                 if (!Array.isArray(item.value))
-                    query[key] = [item.value]
+                    query[key][item.operator] = [item.value]
                 else
-                    query[key] = { $in: item.value }
+                    query[key] = { $nin: item.value }
                 break;
             case '$or':
                 if (!query[item.operator])
