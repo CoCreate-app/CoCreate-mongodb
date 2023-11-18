@@ -1,3 +1,10 @@
+## [1.12.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.12.2...v1.12.3) (2023-11-18)
+
+
+### Bug Fixes
+
+*  operator ([15a617e](https://github.com/CoCreate-app/CoCreate-mongodb/commit/15a617eec39db3d1b67c2fe0221f6340112e43ed))
+
 ## [1.12.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.12.1...v1.12.2) (2023-11-18)
 
 
