@@ -1,3 +1,10 @@
+## [1.12.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.12.1...v1.12.2) (2023-11-18)
+
+
+### Bug Fixes
+
+* handling of $nin operator ([56cbd21](https://github.com/CoCreate-app/CoCreate-mongodb/commit/56cbd21d3ff2c52da3477eba4a9090372954be1e))
+
 ## [1.12.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.12.0...v1.12.1) (2023-11-12)
 
 
