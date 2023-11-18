@@ -695,6 +695,12 @@ function createQuery(queries) {
                 query[key][item.operator] = item.value;
                 break;
             case '$in':
+                if (!Array.isArray(item.value))
+                    query[key][item.operator] = [item.value]
+                else
+                    query[key] = { $in: item.value }
+                break;
+
             case '$nin':
                 if (!Array.isArray(item.value))
                     query[key][item.operator] = [item.value]
