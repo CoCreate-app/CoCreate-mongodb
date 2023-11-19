@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.13.0...v1.13.1) (2023-11-19)
+
+
+### Bug Fixes
+
+* handle object value string ([a97f529](https://github.com/CoCreate-app/CoCreate-mongodb/commit/a97f529b6991d6e7bf9967b7cd4bb6e7a0d6178d))
+
 # [1.13.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.12.3...v1.13.0) (2023-11-19)
 
 
