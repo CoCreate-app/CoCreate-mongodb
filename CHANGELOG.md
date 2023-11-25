@@ -1,3 +1,15 @@
+# [1.15.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.14.0...v1.15.0) (2023-11-25)
+
+
+### Bug Fixes
+
+* update licensing details ([111cfa2](https://github.com/CoCreate-app/CoCreate-mongodb/commit/111cfa2344f7a9232990cf0c051a4fa6edcd8c16))
+
+
+### Features
+
+* upgrade dependencies for latest features and fixes ([2278fba](https://github.com/CoCreate-app/CoCreate-mongodb/commit/2278fba51ea058cc88317ed7e66a82200024771f))
+
 # [1.14.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.13.1...v1.14.0) (2023-11-25)
 
 
