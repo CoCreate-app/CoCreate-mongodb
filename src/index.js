@@ -709,6 +709,15 @@ function createQuery(queries) {
                 else
                     query[key] = { $nin: item.value }
                 break;
+            case '$elemMatch':
+                query[key] = {
+                    "$elemMatch": {
+                        name: {
+                            $in: item.value
+                        }
+                    }
+                }
+                break;
             case '$or':
                 if (!query[item.operator])
                     query[item.operator] = [{ [key]: item.value }];
@@ -727,6 +736,9 @@ function createQuery(queries) {
                 } catch (e) {
                     console.log('geowithin error');
                 }
+                break;
+            case 'dotNotation':
+                // TODO: handle CoCreate query using dotNotation, objects and utils.dotNotionToObject to perform deep merge
                 break;
         }
     }
