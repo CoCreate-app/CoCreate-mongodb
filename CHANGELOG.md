@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.16.0...v1.16.1) (2024-01-08)
+
+
+### Bug Fixes
+
+* handling of array item update ([a189784](https://github.com/CoCreate-app/CoCreate-mongodb/commit/a1897845606460defe3d3d628e73b18d3abf6f32))
+
 # [1.16.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.15.0...v1.16.0) (2024-01-08)
 
 
