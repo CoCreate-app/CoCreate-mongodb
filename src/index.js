@@ -581,12 +581,20 @@ function createUpdate(update, options, data, isGlobal) {
         } else if (operator === '$push' || operator === '$each' || typeof index === 'number') {
             updates[key] = data[originalKey]
             if (typeof index === 'number' && index >= 0) {
-                if (operator === '$push')
-                    updates[key] = [data[originalKey]]
+                if (!operator)
+                    operator = "$set"
+                else {
+                    if (operator === '$push')
+                        updates[key] = [data[originalKey]]
 
-                let insert = { $each: updates[key] }
-                insert.$postion = index
-                updates[key] = insert
+
+                    let insert = { $each: updates[key] }
+                    insert.$postion = index
+                    if (index >= 0)
+                        updates[arrayKey] = insert
+                    else
+                        updates[key] = insert
+                }
             }
         } else if (operator === '$inc') {
             updates[key] = data[originalKey]
