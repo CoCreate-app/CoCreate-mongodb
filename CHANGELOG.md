@@ -1,3 +1,11 @@
+# [1.16.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.15.0...v1.16.0) (2024-01-08)
+
+
+### Features
+
+* bumped CoCreate dependencies to their latest versions ([6cbffba](https://github.com/CoCreate-app/CoCreate-mongodb/commit/6cbffba8c2a1582e770d213ec509a6f35be4b9b6))
+* support $elemMatch operator ([520cda3](https://github.com/CoCreate-app/CoCreate-mongodb/commit/520cda3080816d487d0bc2e02c58996392f33a3b))
+
 # [1.15.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.14.0...v1.15.0) (2023-11-25)
 
 
