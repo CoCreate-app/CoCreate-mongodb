@@ -1,5 +1,5 @@
 const { MongoClient, ObjectId } = require('mongodb');
-const { dotNotationToObject, queryData, searchData, sortData, isValidDate } = require('@cocreate/utils')
+const { dotNotationToObject, query, searchData, sortData, isValidDate } = require('@cocreate/utils')
 const clients = new Map()
 const organizations = {}
 
@@ -617,7 +617,7 @@ async function createFilter(data, arrayObj) {
 
     if (data.$filter) {
         if (data.$filter.query)
-            query = createQuery(data.$filter.query);
+            query = data.$filter.query
 
         if (data.$filter.sort) {
             for (let i = 0; i < data.$filter.sort.length; i++) {
@@ -646,118 +646,6 @@ async function createFilter(data, arrayObj) {
         query['organization_id'] = { $eq: data['organization_id'] }
 
     return { query, sort, index, limit, count }
-}
-
-
-// TODO: improve mongodb query to cover many of mongodb query cases
-function createQuery(queries) {
-    let query = new Object();
-
-    for (let item of queries) {
-
-        if (!item.key)
-            continue
-
-        if (item.key == "_id") {
-            if (item.value)
-                try {
-                    item.value = ObjectId(item.value)
-                } catch (error) {
-                    continue
-                }
-            else
-                continue
-        }
-
-        if (isValidDate(item.value))
-            item.value = new Date(item.value)
-
-        let key = item.key;
-        if (!query[key]) {
-            query[key] = {};
-        }
-
-        switch (item.operator) {
-            case '$includes':
-            case 'includes':
-                query[key]['$regex'] = item.value;
-                break;
-
-            case '$range':
-                if (item.value[0] !== null && item.value[1] !== null) {
-                    query[key] = { $gte: item.value[0], $lte: item.value[1] };
-                } else if (item.value[0] !== null) {
-                    query[key] = { $gte: item.value[0] };
-                } else if (item.value[1] !== null) {
-                    query[key] = { $lte: item.value[1] };
-                }
-                break;
-
-            case 'equals':
-                query[$eq][item.operator] = item.value;
-            case '$eq':
-            case '$ne':
-            case '$lt':
-            case '$lte':
-            case '$gt':
-            case '$gte':
-            case '$regex':
-                query[key][item.operator] = item.value;
-                break;
-            case '$in':
-                if (!Array.isArray(item.value))
-                    query[key][item.operator] = [item.value]
-                else
-                    query[key] = { $in: item.value }
-                break;
-
-            case '$nin':
-                if (!Array.isArray(item.value))
-                    query[key][item.operator] = [item.value]
-                else
-                    query[key] = { $nin: item.value }
-                break;
-            case '$elemMatch':
-                query[key] = {
-                    "$elemMatch": {
-                        name: {
-                            $in: item.value
-                        }
-                    }
-                }
-                break;
-            case '$or':
-                if (!query[item.operator])
-                    query[item.operator] = [{ [key]: item.value }];
-                else
-                    query[item.operator].push({ [key]: item.value })
-                delete query[key]
-                break;
-            case '$geoWithin':
-                try {
-                    let value = JSON.parse(item.value);
-                    if (item.type) {
-                        query[key]['$geoWithin'] = {
-                            [item.type]: value
-                        }
-                    }
-                } catch (e) {
-                    console.log('geowithin error');
-                }
-                break;
-            case 'dotNotation':
-                // TODO: handle CoCreate query using dotNotation, objects and utils.dotNotionToObject to perform deep merge
-                break;
-        }
-    }
-
-    //. global search
-    //. we have to set indexes in text fields ex: db.chart.createIndex({ "$**": "text" })
-    // if (data['searchKey']) {
-    //   query["$text"] = {$search: "\"Ni\""};
-    // }
-
-    return query;
 }
 
 function parseRegExp(regExpString) {
