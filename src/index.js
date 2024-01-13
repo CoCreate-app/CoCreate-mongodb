@@ -649,7 +649,7 @@ async function createFilter(data, arrayObj) {
 }
 
 
-// TODO: improve mongodb query to cover many cases
+// TODO: improve mongodb query to cover many of mongodb query cases
 function createQuery(queries) {
     let query = new Object();
 
@@ -758,6 +758,14 @@ function createQuery(queries) {
     // }
 
     return query;
+}
+
+function parseRegExp(regExpString) {
+    let matches = regExpString.match(/\/(.*)\/(.*)/);
+    return {
+        pattern: matches[1],
+        options: matches[2]
+    };
 }
 
 function createProjection(data) {
