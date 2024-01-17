@@ -1,3 +1,15 @@
+# [1.17.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.16.1...v1.17.0) (2024-01-17)
+
+
+### Bug Fixes
+
+* update to support new query system ([7555076](https://github.com/CoCreate-app/CoCreate-mongodb/commit/7555076cf718f68d56547988879e910770a45c5e))
+
+
+### Features
+
+* parseRegex expresion function to seperate pattern from options ([9401b07](https://github.com/CoCreate-app/CoCreate-mongodb/commit/9401b07b459f3a809e2ef0496a5df08adb5840b1))
+
 ## [1.16.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.16.0...v1.16.1) (2024-01-08)
 
 
