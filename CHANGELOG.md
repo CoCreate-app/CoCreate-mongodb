@@ -1,3 +1,10 @@
+## [1.17.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.0...v1.17.1) (2024-01-18)
+
+
+### Bug Fixes
+
+* handle stroage if $storage string ([732a2b9](https://github.com/CoCreate-app/CoCreate-mongodb/commit/732a2b9e0ac6cb10225a202df204f046e6728733))
+
 # [1.17.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.16.1...v1.17.0) (2024-01-17)
 
 
