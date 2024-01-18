@@ -294,6 +294,14 @@ function object(method, data) {
                         let $storage = data[type][i].$storage || []
                         let $database = data[type][i].$database || []
                         let $array = data[type][i].$array || []
+
+                        if (!Array.isArray($storage))
+                            $storage = [data[type][i].$storage]
+                        if (!Array.isArray($database))
+                            $database = [data[type][i].$database]
+                        if (!Array.isArray($array))
+                            $array = [data[type][i].$array]
+
                         $storage.push(data.storageName)
                         $database.push(database)
                         $array.push(array)
