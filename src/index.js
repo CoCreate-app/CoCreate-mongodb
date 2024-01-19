@@ -738,19 +738,23 @@ function getBytes(data) {
 }
 
 function errorHandler(data, error, database, array) {
-    if (typeof error == 'object')
-        error['storage'] = 'mongodb'
-    else
-        error = { storage: data.storageName, message: error }
+    let errorMessage = typeof error === 'object' && error.message ? error.message : error;
+
+    let errorObject = {
+        message: errorMessage,
+        storage: 'mongodb'
+    };
 
     if (database)
-        error['database'] = database
+        errorObject.database = database;
     if (array)
-        error['array'] = array
-    if (data.error)
-        data.error.push(error)
-    else
-        data.error = [error]
+        errorObject.array = array;
+
+    if (Array.isArray(data.error)) {
+        data.error.push(errorObject);
+    } else {
+        data.error = [errorObject];
+    }
 }
 
 module.exports = { send }
