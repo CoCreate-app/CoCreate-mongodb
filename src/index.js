@@ -651,7 +651,7 @@ async function createFilter(data, arrayObj) {
     }
 
     if (data['organization_id'])
-        query['organization_id'] = { $eq: data['organization_id'] }
+        query['organization_id'] = data['organization_id']
 
     return { query, sort, index, limit, count }
 }
