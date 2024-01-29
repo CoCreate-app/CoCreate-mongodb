@@ -1,5 +1,5 @@
 const { MongoClient, ObjectId } = require('mongodb');
-const { dotNotationToObject, query, searchData, sortData, isValidDate } = require('@cocreate/utils')
+const { dotNotationToObject, queryData, searchData, sortData, isValidDate } = require('@cocreate/utils')
 const clients = new Map()
 const organizations = {}
 
@@ -405,6 +405,10 @@ function object(method, data) {
                             }
                         } else if (isFilter) {
                             try {
+                                // TODO: index is 1 if indexeddb already returned an item interfering with query
+                                // if (data.array === "keys")
+                                //     index = 0
+
                                 if (method === 'read')
                                     projection = { ...projections, ...projection }
 
@@ -432,7 +436,7 @@ function object(method, data) {
                                         let object = data[type].find(obj => obj._id && obj._id.toString() === document._id.toString())
                                         if (object) {
                                             if (object.$storage && object.modified && object.modified.on) {
-                                                if (document && new Date(object.modified.on) > new Date(document.modified.on)) {
+                                                if (document && document.modified && new Date(object.modified.on) > new Date(document.modified.on)) {
                                                     object = { ...document, ...object }
                                                     createUpdate(update, options, object)
                                                     document = await arrayObj.updateOne(query, update, options);
