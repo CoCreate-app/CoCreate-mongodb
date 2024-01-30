@@ -1,3 +1,12 @@
+## [1.17.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.1...v1.17.2) (2024-01-30)
+
+
+### Bug Fixes
+
+* error message ([0344407](https://github.com/CoCreate-app/CoCreate-mongodb/commit/03444076bbc9da8379d8d9a112170ff1c2d416f3))
+* query.organization_id ([1bcbff7](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1bcbff7c57df52aa984b16e1df800d9b3cb0a581))
+* queryData ([e49ab52](https://github.com/CoCreate-app/CoCreate-mongodb/commit/e49ab526bfcd9897f7fb30f578cb142c9c5b0efd))
+
 ## [1.17.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.0...v1.17.1) (2024-01-18)
 
 
