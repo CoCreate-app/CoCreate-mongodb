@@ -1,3 +1,10 @@
+## [1.17.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.2...v1.17.3) (2024-02-05)
+
+
+### Bug Fixes
+
+* Removed https://cdn.cocreate.app/latest/CoCreate.min.css ([8988124](https://github.com/CoCreate-app/CoCreate-mongodb/commit/89881240e2053d6b36bb7950ab3705bea7d1e69f))
+
 ## [1.17.2](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.1...v1.17.2) (2024-01-30)
 
 
