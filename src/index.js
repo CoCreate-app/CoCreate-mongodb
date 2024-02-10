@@ -717,20 +717,26 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
     let key = '_id'
     if (type !== 'object')
         key = 'name'
-    for (let i = 0; i < array.length; i++) {
-        const matchIndex = data[type].findIndex((item) => item[key] === array[i][key]);
-        if (matchIndex !== -1) {
-            data[type][matchIndex].$storage.push(array[i].$storage)
-            delete array[i].$storage
-            data[type][matchIndex].$database.push(array[i].$database)
-            delete array[i].$database
-            data[type][matchIndex].$array.push(array[i].$array)
-            delete array[i].$array
 
-            // TODO: compare dates and merge and and updates to keep all synced and up to date
-            data[type][matchIndex] = { ...data[type][matchIndex], ...array[i] };
-        } else
-            data[type].push(array[i])
+    // TODO: handle case where data[type] is not an array
+    if (!Array.isArray(data[type]))
+        console.log('data[type] is not an array', type)
+    else {
+        for (let i = 0; i < array.length; i++) {
+            const matchIndex = data[type].findIndex((item) => item[key] === array[i][key]);
+            if (matchIndex !== -1) {
+                data[type][matchIndex].$storage.push(array[i].$storage)
+                delete array[i].$storage
+                data[type][matchIndex].$database.push(array[i].$database)
+                delete array[i].$database
+                data[type][matchIndex].$array.push(array[i].$array)
+                delete array[i].$array
+
+                // TODO: compare dates and merge and and updates to keep all synced and up to date
+                data[type][matchIndex] = { ...data[type][matchIndex], ...array[i] };
+            } else
+                data[type].push(array[i])
+        }
     }
 
     return data
