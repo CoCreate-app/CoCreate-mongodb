@@ -1,3 +1,10 @@
+## [1.17.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.3...v1.17.4) (2024-02-13)
+
+
+### Bug Fixes
+
+* added console.log to temporarily log data[type] that are not arrays ([7fc7e1a](https://github.com/CoCreate-app/CoCreate-mongodb/commit/7fc7e1a4b4e4477b462c48be187fe3b6d416721d))
+
 ## [1.17.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.2...v1.17.3) (2024-02-05)
 
 
