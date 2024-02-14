@@ -725,6 +725,12 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
         for (let i = 0; i < array.length; i++) {
             const matchIndex = data[type].findIndex((item) => item[key] === array[i][key]);
             if (matchIndex !== -1) {
+                if (!data[type][matchIndex].$storage)
+                    data[type][matchIndex].$storage = []
+                if (!data[type][matchIndex].$database)
+                    data[type][matchIndex].$database = []
+                if (!data[type][matchIndex].$array)
+                    data[type][matchIndex].$array = []
                 data[type][matchIndex].$storage.push(array[i].$storage)
                 delete array[i].$storage
                 data[type][matchIndex].$database.push(array[i].$database)
