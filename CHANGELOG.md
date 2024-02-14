@@ -1,3 +1,10 @@
+## [1.17.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.4...v1.17.5) (2024-02-14)
+
+
+### Bug Fixes
+
+* $storage,$database, etc. if does not exist set as empty array ([a7d1ae4](https://github.com/CoCreate-app/CoCreate-mongodb/commit/a7d1ae4a277ad2f136963b4e78b6c7ba3826c3ba))
+
 ## [1.17.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.3...v1.17.4) (2024-02-13)
 
 
