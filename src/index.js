@@ -520,6 +520,8 @@ function createUpdate(update, options, data, isGlobal) {
         options.upsert = data.upsert
     if (data.$upsert)
         options.upsert = data.$upsert
+    if (data.$update)
+        delete data.$update
 
     Object.keys(data).forEach(key => {
         if (isGlobal && !key.startsWith('$') || key === '_id')
@@ -560,6 +562,8 @@ function createUpdate(update, options, data, isGlobal) {
             }
             if (!key.startsWith('$'))
                 operator = '$push'
+            if (key.endsWith('[]'))
+                key = key.replace('[]', '');
         }
 
         let operators = ['$rename', '$inc', '$push', '$each', '$splice', '$unset', '$delete', '$slice', '$pop', '$shift', '$addToSet', '$pull', '$currentDate']
