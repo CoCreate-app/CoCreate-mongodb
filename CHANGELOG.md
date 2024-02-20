@@ -1,3 +1,10 @@
+## [1.17.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.5...v1.17.6) (2024-02-20)
+
+
+### Bug Fixes
+
+* process key[] as $push ([5628edf](https://github.com/CoCreate-app/CoCreate-mongodb/commit/5628edf111e46901583fd0ac9fcd5c27687f4204))
+
 ## [1.17.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.4...v1.17.5) (2024-02-14)
 
 
