@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.6...v1.18.0) (2024-04-28)
+
+
+### Features
+
+* handle date queries ([7d437f2](https://github.com/CoCreate-app/CoCreate-mongodb/commit/7d437f28a98b1c89066a7be3885cba137a524d65))
+
 ## [1.17.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.5...v1.17.6) (2024-02-20)
 
 
