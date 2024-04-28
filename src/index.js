@@ -632,8 +632,43 @@ async function createFilter(data, arrayObj) {
     let query = {}, sort = {}, index = 0, limit = 0, count
 
     if (data.$filter) {
-        if (data.$filter.query)
-            query = data.$filter.query
+        function convertIfDate(value) {
+            if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)) {
+                return new Date(value);
+            }
+            return value;
+        }
+
+        if (data.$filter.query) {
+            for (let key in data.$filter.query) {
+                if (Array.isArray(data.$filter.query[key])) {
+                    // Handle $or operator with an array of conditions
+                    query[key] = data.$filter.query[key].map(condition => {
+                        let newCondition = {};
+                        for (let subKey in condition) {
+                            if (typeof condition[subKey] === 'object' && condition[subKey] !== null) {
+                                newCondition[subKey] = {};
+                                for (let subCondition in condition[subKey]) {
+                                    newCondition[subKey][subCondition] = convertIfDate(condition[subKey][subCondition]);
+                                }
+                            } else {
+                                newCondition[subKey] = convertIfDate(condition[subKey]);
+                            }
+                        }
+                        return newCondition;
+                    });
+                } else if (typeof data.$filter.query[key] === 'object' && data.$filter.query[key] !== null) {
+                    // Handle general object conditions
+                    query[key] = {};
+                    for (let condition in data.$filter.query[key]) {
+                        query[key][condition] = convertIfDate(data.$filter.query[key][condition]);
+                    }
+                } else {
+                    // Handle direct values
+                    query[key] = convertIfDate(data.$filter.query[key]);
+                }
+            }
+        }
 
         if (data.$filter.sort) {
             for (let i = 0; i < data.$filter.sort.length; i++) {
