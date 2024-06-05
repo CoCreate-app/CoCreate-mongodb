@@ -764,18 +764,19 @@ function createData(data, array, type, dataTransferedIn, dataTransferedOut) {
         for (let i = 0; i < array.length; i++) {
             const matchIndex = data[type].findIndex((item) => item[key] === array[i][key]);
             if (matchIndex !== -1) {
-                if (!data[type][matchIndex].$storage)
-                    data[type][matchIndex].$storage = []
-                if (!data[type][matchIndex].$database)
-                    data[type][matchIndex].$database = []
-                if (!data[type][matchIndex].$array)
-                    data[type][matchIndex].$array = []
-                data[type][matchIndex].$storage.push(array[i].$storage)
-                delete array[i].$storage
-                data[type][matchIndex].$database.push(array[i].$database)
-                delete array[i].$database
-                data[type][matchIndex].$array.push(array[i].$array)
-                delete array[i].$array
+                for (let $type of ['$storage', '$database', '$array']) {
+                    if (!data[type][matchIndex][$type])
+                        data[type][matchIndex][$type] = []
+                    if (!Array.isArray(data[type][matchIndex][$type])) {
+                        data[type][matchIndex][$type] = [data[type][matchIndex][$type]]
+                        if (!data[type][matchIndex][$type].includes(array[i][$type])) {
+                            data[type][matchIndex][$type].push(array[i][$type])
+                        }
+                    } else {
+                        data[type][matchIndex][$type].push(array[i][$type])
+                    }
+                    delete array[i][$type]
+                }
 
                 // TODO: compare dates and merge and and updates to keep all synced and up to date
                 data[type][matchIndex] = { ...data[type][matchIndex], ...array[i] };
