@@ -1,3 +1,10 @@
+## [1.18.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.0...v1.18.1) (2024-06-22)
+
+
+### Bug Fixes
+
+* handling of $storage, $database, and $array refrence ([788c27f](https://github.com/CoCreate-app/CoCreate-mongodb/commit/788c27f4bf1ab8f37aabeb0e7d18d7378385cc07))
+
 # [1.18.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.17.6...v1.18.0) (2024-04-28)
 
 
