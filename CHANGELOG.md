@@ -1,3 +1,10 @@
+## [1.18.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.3...v1.18.4) (2024-06-23)
+
+
+### Bug Fixes
+
+* add lock file ([3235b66](https://github.com/CoCreate-app/CoCreate-mongodb/commit/3235b668e46e94c45d5487f4c421d29546c03b6f))
+
 ## [1.18.3](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.2...v1.18.3) (2024-06-23)
 
 
