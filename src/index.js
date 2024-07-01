@@ -412,6 +412,9 @@ function object(method, data) {
                                 if (method === 'read')
                                     projection = { ...projections, ...projection }
 
+                                if (data.$filter && data.$filter.startingIndex >= 0)
+                                    index = data.$filter.startingIndex
+
                                 dataTransferedOut += getBytes({ query, projection, sort, index, limit })
 
                                 let document = ''
