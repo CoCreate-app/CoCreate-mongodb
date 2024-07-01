@@ -1,3 +1,10 @@
+## [1.18.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.4...v1.18.5) (2024-07-01)
+
+
+### Bug Fixes
+
+* if startingIndex use as index ([7d5ee2e](https://github.com/CoCreate-app/CoCreate-mongodb/commit/7d5ee2e88d7a47270db0ea7045a87181bd9672e3))
+
 ## [1.18.4](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.3...v1.18.4) (2024-06-23)
 
 
