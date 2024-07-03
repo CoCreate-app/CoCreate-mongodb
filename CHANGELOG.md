@@ -1,3 +1,10 @@
+## [1.18.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.5...v1.18.6) (2024-07-03)
+
+
+### Bug Fixes
+
+* handling objectId in queries ([58c92b2](https://github.com/CoCreate-app/CoCreate-mongodb/commit/58c92b259da510e8020ff9211c72ce678905aceb))
+
 ## [1.18.5](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.4...v1.18.5) (2024-07-01)
 
 
