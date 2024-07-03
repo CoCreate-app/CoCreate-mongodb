@@ -652,10 +652,16 @@ async function createFilter(data, arrayObj) {
                             if (typeof condition[subKey] === 'object' && condition[subKey] !== null) {
                                 newCondition[subKey] = {};
                                 for (let subCondition in condition[subKey]) {
-                                    newCondition[subKey][subCondition] = convertIfDate(condition[subKey][subCondition]);
+                                    if (subKey == "_id")
+                                        newCondition[subKey][subCondition] = ObjectId(condition[subKey][subCondition])
+                                    else
+                                        newCondition[subKey][subCondition] = convertIfDate(condition[subKey][subCondition]);
                                 }
                             } else {
-                                newCondition[subKey] = convertIfDate(condition[subKey]);
+                                if (subKey == "_id")
+                                    newCondition[subKey] = ObjectId(condition[subKey])
+                                else
+                                    newCondition[subKey] = convertIfDate(condition[subKey]);
                             }
                         }
                         return newCondition;
@@ -664,11 +670,17 @@ async function createFilter(data, arrayObj) {
                     // Handle general object conditions
                     query[key] = {};
                     for (let condition in data.$filter.query[key]) {
-                        query[key][condition] = convertIfDate(data.$filter.query[key][condition]);
+                        if (key == "_id")
+                            query[key][condition] = ObjectId(data.$filter.query[key][condition])
+                        else
+                            query[key][condition] = convertIfDate(data.$filter.query[key][condition]);
                     }
                 } else {
                     // Handle direct values
-                    query[key] = convertIfDate(data.$filter.query[key]);
+                    if (key == "_id")
+                        query[key] = ObjectId(data.$filter.query[key])
+                    else
+                        query[key] = convertIfDate(data.$filter.query[key]);
                 }
             }
         }
