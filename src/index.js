@@ -338,7 +338,7 @@ function object(method, data) {
                         if (data[type][i]._id || method === 'create') {
                             if (method !== 'create') {
                                 try {
-                                    query._id = new ObjectId(data[type][i]._id);
+                                    query._id = ObjectId(data[type][i]._id);
                                 } catch (error) {
                                     if (method === 'update' && options.upsert) {
                                         data[type][i]._id = ObjectId()
@@ -369,7 +369,8 @@ function object(method, data) {
                                     // documents.push({ ...data[type][i], ...reference })
                                 } else if (method === 'read') {
                                     result = await arrayObj.findOne(query, projection);
-                                    result._id = result._id.toString()
+                                    if (result)
+                                        result._id = result._id.toString()
 
                                     if (data[type][i].$storage && data[type][i].modified && data[type][i].modified.on) {
                                         if (!result) {
@@ -381,8 +382,12 @@ function object(method, data) {
                                             result = await arrayObj.updateOne(query, update, options);
                                         } else
                                             data[type][i] = { ...data[type][i], ...result }
-                                    } else
+                                    } else if (result)
                                         data[type][i] = { ...data[type][i], ...result }
+                                    else {
+                                        data[type].splice(i, 1);
+                                        continue;
+                                    }
                                 } else if (method === 'update') {
                                     result = await arrayObj.updateOne(query, update, options);
 
