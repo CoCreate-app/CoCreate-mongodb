@@ -1,3 +1,10 @@
+## [1.18.7](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.6...v1.18.7) (2024-07-05)
+
+
+### Bug Fixes
+
+* remove new keyword from ObjectId ([8198e98](https://github.com/CoCreate-app/CoCreate-mongodb/commit/8198e98a7b297607f0a4b171256c7166b9675836))
+
 ## [1.18.6](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.5...v1.18.6) (2024-07-03)
 
 
