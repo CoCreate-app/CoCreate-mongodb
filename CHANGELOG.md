@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.7...v1.19.0) (2024-11-02)
+
+
+### Features
+
+* allowDiskUse, set $storage, $database, $array if not included ([39a71d9](https://github.com/CoCreate-app/CoCreate-mongodb/commit/39a71d9c29b6432dae1951fcad1ce88e3fbe817e))
+
 ## [1.18.7](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.6...v1.18.7) (2024-07-05)
 
 
