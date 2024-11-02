@@ -302,9 +302,12 @@ function object(method, data) {
                         if (!Array.isArray($array))
                             $array = [data[type][i].$array]
 
-                        $storage.push(data.storageName)
-                        $database.push(database)
-                        $array.push(array)
+                        if (!$storage.includes(data.storageName))
+                            $storage.push(data.storageName)
+                        if (!$database.includes(database))
+                            $database.push(database)
+                        if (!$array.includes(array))
+                            $array.push(array)
 
                         delete data[type][i].$storage
                         delete data[type][i].$database
@@ -422,8 +425,12 @@ function object(method, data) {
 
                                 dataTransferedOut += getBytes({ query, projection, sort, index, limit })
 
-                                let document = ''
-                                const cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit);
+                                let cursor, document = ''
+                                if (Object.keys(sort).length > 0)
+                                    cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit).allowDiskUse(true);
+                                else
+                                    cursor = arrayObj.find(query, projection).sort(sort).skip(index).limit(limit);
+
                                 if (!(await cursor.hasNext()) && method === 'update' && data.upsert)
                                     document = { _id: ObjectId(data[type][i]._id) }
 
