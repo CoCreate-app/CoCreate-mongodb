@@ -1,3 +1,15 @@
+# [1.20.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.19.0...v1.20.0) (2024-11-04)
+
+
+### Bug Fixes
+
+* prettier.config options ([1cce40a](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1cce40a4b8320418ff36a76ab4cf421960f9c6c7))
+
+
+### Features
+
+* add prettier.config.js and format files ([1baba2c](https://github.com/CoCreate-app/CoCreate-mongodb/commit/1baba2c4a8d97f315737e321e7f48193df970a22))
+
 # [1.19.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.18.7...v1.19.0) (2024-11-02)
 
 
