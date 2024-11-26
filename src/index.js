@@ -545,6 +545,14 @@ function object(method, data) {
 											continue;
 										}
 									} else if (method === "update") {
+										if (update['$pull'] && update['$unset']) {
+											result = await arrayObj.updateOne(
+												query,
+												{$unset: update['$unset']},
+												options
+											);
+											delete update['$unset']
+										}
 										result = await arrayObj.updateOne(
 											query,
 											update,
@@ -707,6 +715,17 @@ function object(method, data) {
 
 											let result;
 											if (method === "update") {
+												if (update['$pull'] && update['$unset']) {
+													result = await arrayObj.updateOne(
+														{
+															_id: document._id
+														},
+														{$unset: update['$unset']},
+														options
+													);
+													delete update['$unset']
+												}
+
 												if (options.returnNewDocument) {
 													let object =
 														await arrayObj.findOneAndUpdate(
@@ -892,8 +911,14 @@ function createUpdate(update, options, data, isGlobal) {
 		) {
 			operator = "$unset";
 			updates[key] = 1;
-			if (!updates["$pull"]) updates["$pull"] = {};
-			updates["$pull"][key.split(".")[0]] = null;
+			// if (!updates["$pull"]) updates["$pull"] = {};
+			const pullkey = key.split('.');  
+			pullkey.shift();               
+			pullkey.pop();                  
+			// updates["$pull"][pullkey.join('.')] = null;
+			// updates["$pull"][pullkey.join('.')] = { $in: [null] };
+		if (!update["$pull"]) update["$pull"] = {};
+			update["$pull"][pullkey.join('.')] = null;
 		} else if (operator === "$pop") {
 			key = arrayKey;
 			updates[key] = index || 1;
