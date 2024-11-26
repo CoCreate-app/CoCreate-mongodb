@@ -1,3 +1,15 @@
+# [1.21.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.20.0...v1.21.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* unset array item by index ([80adab3](https://github.com/CoCreate-app/CoCreate-mongodb/commit/80adab31fed06b9b4d6ab44535a960956bbc4e57))
+
+
+### Features
+
+* handle $unset and $pull ([93fe6cd](https://github.com/CoCreate-app/CoCreate-mongodb/commit/93fe6cd8967b5005e4001d960c28593caa7c3d55))
+
 # [1.20.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.19.0...v1.20.0) (2024-11-04)
 
 
