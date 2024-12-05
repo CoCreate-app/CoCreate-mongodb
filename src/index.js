@@ -374,6 +374,9 @@ function object(method, data) {
 							update = {},
 							options = {};
 
+						if (data.$filter && data.$filter.key)
+							projection = data.$filter.key
+						
 						if (method === "update")
 							createUpdate(update, options, data, true);
 
@@ -422,7 +425,7 @@ function object(method, data) {
 									by: data.user_id || data.clientId
 								};
 							} else if (method === "read") {
-								projection = createProjection(data[type][i]);
+								// projection = createProjection(projection, data[type][i]);
 							} else if (method === "update") {
 								if (!data[type][i].modified)
 									data[type][i].modified = {
@@ -492,7 +495,7 @@ function object(method, data) {
 									} else if (method === "read") {
 										result = await arrayObj.findOne(
 											query,
-											projection
+											{projection}
 										);
 										if (result)
 											result._id = result._id.toString();
@@ -608,14 +611,14 @@ function object(method, data) {
 										document = "";
 									if (Object.keys(sort).length > 0)
 										cursor = arrayObj
-											.find(query, projection)
+											.find(query, {projection})
 											.sort(sort)
 											.skip(index)
 											.limit(limit)
 											.allowDiskUse(true);
 									else
 										cursor = arrayObj
-											.find(query, projection)
+											.find(query, {projection})
 											.sort(sort)
 											.skip(index)
 											.limit(limit);
@@ -1072,11 +1075,9 @@ function parseRegExp(regExpString) {
 	};
 }
 
-function createProjection(data) {
-	let projection = {};
-
+function createProjection(projection, data) {
 	Object.keys(data).forEach((key) => {
-		if (!["_id", "organization_id"].includes(key) && !key.startsWith("$"))
+		if (!["_id", "organization_id", "isFIlter"].includes(key) && !key.startsWith("$"))
 			projection[key.replace(/\[(\d+)\]/g, ".$1")] = 1;
 	});
 
