@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.21.0...v1.21.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* projection handeling ([ee8a878](https://github.com/CoCreate-app/CoCreate-mongodb/commit/ee8a87856bd2032242b2e0dd5f05b995ee519f23))
+
 # [1.21.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.20.0...v1.21.0) (2024-11-26)
 
 
