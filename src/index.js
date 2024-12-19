@@ -375,8 +375,8 @@ function object(method, data) {
 							options = {};
 
 						if (data.$filter && data.$filter.key)
-							projection = data.$filter.key
-						
+							projection = data.$filter.key;
+
 						if (method === "update")
 							createUpdate(update, options, data, true);
 
@@ -493,10 +493,9 @@ function object(method, data) {
 											result.insertedId.toString();
 										// documents.push({ ...data[type][i], ...reference })
 									} else if (method === "read") {
-										result = await arrayObj.findOne(
-											query,
-											{projection}
-										);
+										result = await arrayObj.findOne(query, {
+											projection
+										});
 										if (result)
 											result._id = result._id.toString();
 
@@ -548,13 +547,16 @@ function object(method, data) {
 											continue;
 										}
 									} else if (method === "update") {
-										if (update['$pull'] && update['$unset']) {
+										if (
+											update["$pull"] &&
+											update["$unset"]
+										) {
 											result = await arrayObj.updateOne(
 												query,
-												{$unset: update['$unset']},
+												{ $unset: update["$unset"] },
 												options
 											);
-											delete update['$unset']
+											delete update["$unset"];
 										}
 										result = await arrayObj.updateOne(
 											query,
@@ -611,14 +613,14 @@ function object(method, data) {
 										document = "";
 									if (Object.keys(sort).length > 0)
 										cursor = arrayObj
-											.find(query, {projection})
+											.find(query, { projection })
 											.sort(sort)
 											.skip(index)
 											.limit(limit)
 											.allowDiskUse(true);
 									else
 										cursor = arrayObj
-											.find(query, {projection})
+											.find(query, { projection })
 											.sort(sort)
 											.skip(index)
 											.limit(limit);
@@ -718,15 +720,23 @@ function object(method, data) {
 
 											let result;
 											if (method === "update") {
-												if (update['$pull'] && update['$unset']) {
-													result = await arrayObj.updateOne(
-														{
-															_id: document._id
-														},
-														{$unset: update['$unset']},
-														options
-													);
-													delete update['$unset']
+												if (
+													update["$pull"] &&
+													update["$unset"]
+												) {
+													result =
+														await arrayObj.updateOne(
+															{
+																_id: document._id
+															},
+															{
+																$unset: update[
+																	"$unset"
+																]
+															},
+															options
+														);
+													delete update["$unset"];
 												}
 
 												if (options.returnNewDocument) {
@@ -915,13 +925,13 @@ function createUpdate(update, options, data, isGlobal) {
 			operator = "$unset";
 			updates[key] = 1;
 			// if (!updates["$pull"]) updates["$pull"] = {};
-			const pullkey = key.split('.');  
-			pullkey.shift();               
-			pullkey.pop();                  
+			const pullkey = key.split(".");
+			pullkey.shift();
+			pullkey.pop();
 			// updates["$pull"][pullkey.join('.')] = null;
 			// updates["$pull"][pullkey.join('.')] = { $in: [null] };
-		if (!update["$pull"]) update["$pull"] = {};
-			update["$pull"][pullkey.join('.')] = null;
+			if (!update["$pull"]) update["$pull"] = {};
+			update["$pull"][pullkey.join(".")] = null;
 		} else if (operator === "$pop") {
 			key = arrayKey;
 			updates[key] = index || 1;
@@ -980,41 +990,45 @@ async function createFilter(data, arrayObj) {
 			return value;
 		}
 
+		// Recursive function to merge keys into dot notation
+		function mergeToDotNotation(obj, parentKey = "", result = {}) {
+			for (let key in obj) {
+				const isOperator = key.startsWith("$");
+				const currentKey = parentKey ? `${parentKey}.${key}` : key;
+
+				if (
+					obj[key] &&
+					typeof obj[key] === "object" &&
+					!Array.isArray(obj[key])
+				) {
+					if (isOperator) {
+						// Ensure operators are grouped under their parent key
+						result[parentKey] = result[parentKey] || {};
+						result[parentKey][key] = obj[key];
+					} else {
+						// Recurse into nested objects
+						mergeToDotNotation(obj[key], currentKey, result);
+					}
+				} else {
+					// Assign to result, merging into dot notation if applicable
+					if (isOperator) {
+						result[parentKey] = result[parentKey] || {};
+						result[parentKey][key] = obj[key];
+					} else {
+						result[currentKey] = obj[key];
+					}
+				}
+			}
+			return result;
+		}
+
 		if (data.$filter.query) {
 			for (let key in data.$filter.query) {
 				if (Array.isArray(data.$filter.query[key])) {
 					// Handle $or operator with an array of conditions
 					query[key] = data.$filter.query[key].map((condition) => {
 						let newCondition = {};
-						for (let subKey in condition) {
-							if (
-								typeof condition[subKey] === "object" &&
-								condition[subKey] !== null
-							) {
-								newCondition[subKey] = {};
-								for (let subCondition in condition[subKey]) {
-									if (subKey == "_id")
-										newCondition[subKey][subCondition] =
-											ObjectId(
-												condition[subKey][subCondition]
-											);
-									else
-										newCondition[subKey][subCondition] =
-											convertIfDate(
-												condition[subKey][subCondition]
-											);
-								}
-							} else {
-								if (subKey == "_id")
-									newCondition[subKey] = ObjectId(
-										condition[subKey]
-									);
-								else
-									newCondition[subKey] = convertIfDate(
-										condition[subKey]
-									);
-							}
-						}
+						mergeToDotNotation(condition, "", newCondition);
 						return newCondition;
 					});
 				} else if (
@@ -1022,22 +1036,13 @@ async function createFilter(data, arrayObj) {
 					data.$filter.query[key] !== null
 				) {
 					// Handle general object conditions
-					query[key] = {};
-					for (let condition in data.$filter.query[key]) {
-						if (key == "_id")
-							query[key][condition] = ObjectId(
-								data.$filter.query[key][condition]
-							);
-						else
-							query[key][condition] = convertIfDate(
-								data.$filter.query[key][condition]
-							);
-					}
+					mergeToDotNotation(data.$filter.query[key], key, query);
 				} else {
 					// Handle direct values
-					if (key == "_id")
-						query[key] = ObjectId(data.$filter.query[key]);
-					else query[key] = convertIfDate(data.$filter.query[key]);
+					query[key] =
+						key === "_id"
+							? ObjectId(data.$filter.query[key])
+							: convertIfDate(data.$filter.query[key]);
 				}
 			}
 		}
@@ -1045,8 +1050,7 @@ async function createFilter(data, arrayObj) {
 		if (data.$filter.sort) {
 			for (let i = 0; i < data.$filter.sort.length; i++) {
 				let direction = data.$filter.sort[i].direction;
-				if (direction == "desc" || direction == -1) direction = -1;
-				else direction = 1;
+				direction = direction === "desc" || direction === -1 ? -1 : 1;
 
 				sort[data.$filter.sort[i].key] = direction;
 			}
@@ -1077,7 +1081,10 @@ function parseRegExp(regExpString) {
 
 function createProjection(projection, data) {
 	Object.keys(data).forEach((key) => {
-		if (!["_id", "organization_id", "isFIlter"].includes(key) && !key.startsWith("$"))
+		if (
+			!["_id", "organization_id", "isFIlter"].includes(key) &&
+			!key.startsWith("$")
+		)
 			projection[key.replace(/\[(\d+)\]/g, ".$1")] = 1;
 	});
 
