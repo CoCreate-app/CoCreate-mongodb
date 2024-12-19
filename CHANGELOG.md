@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.21.1...v1.22.0) (2024-12-19)
+
+
+### Features
+
+* impoved projection handeling,mergeTtoDotNotation function for queries etc ([d18f84e](https://github.com/CoCreate-app/CoCreate-mongodb/commit/d18f84e82a9edced30aa42b13d9442e7c841b6e8))
+
 ## [1.21.1](https://github.com/CoCreate-app/CoCreate-mongodb/compare/v1.21.0...v1.21.1) (2024-12-05)
 
 
